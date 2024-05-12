@@ -184,7 +184,22 @@ align-items: right;
   input {
     border:none;
   }
+  .modelPrinting select {
+    border:none;
+    -webkit-appearance: none;
+    
+  }
 };
+
+
+/* @media print {
+  .modelPrinting select {
+    border: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+} */
 
 
 

@@ -1,9 +1,12 @@
 import React from "react";
 import App from "../App.css";
 import { useState, useEffect } from "react";
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const Form = () => {
-  
   const [showInvoice, setShowInvoice] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [printing, setPrinting] = useState(false);
@@ -25,6 +28,9 @@ const Form = () => {
   const [color, setColor] = useState("");
   const [hyphocated, setHypocated] = useState("");
   const [model, setModel] = useState();
+  const[modelInput,setModelInput] = useState('');
+  const [description, setDescription] = useState("");
+  const[descriptionInput, setDescriptionInput] = useState("");
   const [modelOutput, setmodelOutput] = useState();
   const [Amount, setAmount] = useState();
   const [AmountOutput, setamountOutput] = useState();
@@ -38,19 +44,47 @@ const Form = () => {
   const [amountInWord, setAmountInWord] = useState();
   const [mandatoryFieldFilled, setMandatoryFieldFilled] = useState(false);
 
-  //-----------for footer hide------------//
+  // --------list of model and discription of bike---------------//
 
-  //  useEffect(()=>{
-  //   const mediaQueryList = window.matchMedia("print");
-  //   const handlePrint=(e)=>{
-  //     setPrinting(e.matches);
-  //   };
-  //   mediaQueryList.addListener(handlePrint);
-  //   return() =>{
-  //     mediaQueryList.removeListener(handlePrint);
-  //   };
+  const [bikeModel] = useState([
+    { model: "00DH50", description: "PULSAR 125 NEOX CB5" },
+    { model: "00DH41", description: "PULSAR 125 CAR SD" },
+    { model: "00DH43", description: "PULSAR 125 CAR SP" },
+    { model: "00DH42", description: "PULSAR 150 SD" },
+    { model: "00JR30", description: "PULSAR N 150 SD" },
+    { model: "00JR31", description: "PULSAR N 150 TD" },
+    { model: "00JR37", description: "PULSAR N TWIN ABS" },
+    { model: "00DH44", description: "PULSAR 150 TD" },
+    { model: "00DY10", description: "CT 125 X" },
+    { model: "00JK36", description: "PLATINUM 110 DABS" },
+    { model: "00JK35", description: "PLATINUM 100 D" },
+    { model: "00PF35", description: "PLATINUM 100 ES" },
+    { model: "00DY08", description: "CT 110 XES" },
+  ]);
 
-  //  },[]);
+  const handleModelChange = (e) => {
+    const model = e.target.value;
+    setModel(model);
+    if(model === "other"){
+      setModelInput('');
+    }else{
+      const selectedBike = bikeModel.find((bike) => bike.model === model);
+      setDescription(selectedBike ? selectedBike.description : "");
+    }
+   };
+
+
+  const handleModelInputChange=(e)=>{
+    setModelInput(e.target.value);
+    setModel('other');
+  }
+
+ const handleDesriptionChange = (e) => {
+  setDescriptionInput(e.target.value);
+    setDescription(e.target.value);
+    
+  };
+
 
   //----------Function to handle row click-----------//
 
@@ -282,9 +316,9 @@ const Form = () => {
     // const totalTax = sgst + cgst;
     // const taxable = amount - totalTax;
 
-    const taxable = (amount/128)*100;
-    const sgst = (taxable*sgstRate)/100;
-    const cgst = (taxable*cgstRate) /100;
+    const taxable = (amount / 128) * 100;
+    const sgst = (taxable * sgstRate) / 100;
+    const cgst = (taxable * cgstRate) / 100;
 
     // let taxable = amount;
     // let unitPriceAfterDiscount = amount;
@@ -358,7 +392,7 @@ const Form = () => {
       count++;
     }
     const words = parts.join(" ").trim();
-    return `Rs.${words} ONLY.`;
+    return `Rs. ${words} ONLY.`;
   };
 
   const convertLessThanThousand = (num) => {
@@ -427,545 +461,623 @@ const Form = () => {
     setdiscount(e.target.value);
   };
 
-  
-
   return (
-    <div style={{paddingLeft:"5px",paddingRight:"5px",}}>
+    <div style={{ paddingLeft: "5px", paddingRight: "5px" }}>
+      <div
+        style={{
+          maxWidth: "1000px",
+          marginRight: "auto",
+          marginLeft: "auto",
+          padding: "30px",
+        }}
+      >
+        {header && (
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-evenly",
+                // alignItems: "center",
+                marginLeft: "auto",
+                marginRight: "auto",
+                width: "100%",
+                marginTop: "-20px",
+              }}
+            >
+              <div style={{ textAlign: "left", marginLeft: "10px" }}>
+                <h3 style={{ marginBottom: "-15px" }}>Branch Address :</h3>
+                <p>
+                  MAA SERVICES (68530)
+                  <br />
+                  NEAR BANA MORE,BUS STOP,PS-KHIZERSARAI,
+                  <br /> GAYA - 824233,
+                  <br />
+                  PH. - 9113478767 Bihar [State Code : 10]
+                </p>
+              </div>
+              <div style={{ textAlign: "left" }}>
+                <h3 style={{ marginBottom: "-15px" }}>MAA SERVICES (68530)</h3>
+                <p>
+                  MAA SERVICES,NEAR BANA MORE,BUS
+                  <br /> STOP,PS-KHIZERSARAI GAYA-824233(BIHAR) Bihar <br />
+                  [State Code : 10]
+                </p>
+              </div>
+              <div style={{ textAlign: "left" }}>
+                <h3 style={{ marginBottom: "-7px" }}>Original For Recipient</h3>
+                <img
+                  style={{ height: "100px", width: "200px" }}
+                  src="https://zeevector.com/wp-content/uploads/2020/05/Bajaj-Bikes-Logo-PNG.png"
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
-      <div style={{maxWidth:"1000px",marginRight:"auto",marginLeft:"auto",padding:"30px",}}>
-
-          {header && (
         <div style={{ display: "flex", justifyContent: "center" }}>
           <div
             style={{
               display: "flex",
-              justifyContent: "space-evenly",
-              // alignItems: "center",
-              marginLeft: "auto",
-              marginRight: "auto",
+              alignItems: "center",
+              justifyContent: "space-between",
               width: "100%",
-              marginTop:"-20px",
             }}
           >
-            <div style={{ textAlign: "left", marginLeft: "10px" }}>
-              <h3 style={{ marginBottom: "-15px" }}>Branch Address :</h3>
-              <p>
-                MAA SERVICES (68530)
-                <br />
-                NEAR BANA MORE,BUS STOP,PS-KHIZERSARAI,
-                <br /> GAYA - 824233,
-                <br />
-                PH. - 9113478767 Bihar [State Code : 10]
-              </p>
+            <div style={{ alignSelf: "flex-end", textAlign: "left" }}>
+              <p style={{ marginBottom: "-16px", fontWeight: "500" }}>GSTIN:</p>
+              <h3>10CIVPK3547B3ZE</h3>
             </div>
-            <div style={{ textAlign: "left" }}>
-              <h3 style={{ marginBottom: "-15px" }}>MAA SERVICES (68530)</h3>
-              <p>
-                MAA SERVICES,NEAR BANA MORE,BUS
-                <br /> STOP,PS-KHIZERSARAI GAYA-824233(BIHAR) Bihar <br />
-                [State Code : 10]
-              </p>
+            <div style={{ textAlign: "center" }}>
+              <h2>TAX INVOICE (Vehicle)</h2>
             </div>
-            <div style={{ textAlign: "left" }}>
-              <h3 style={{ marginBottom: "-7px" }}>Original For Recipient</h3>
-              <img
-                style={{ height: "100px", width: "200px" }}
-                src="https://zeevector.com/wp-content/uploads/2020/05/Bajaj-Bikes-Logo-PNG.png"
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            width: "100%",
-          }}
-        >
-          <div style={{ alignSelf: "flex-end", textAlign: "left" }}>
-            <p style={{ marginBottom: "-16px", fontWeight: "500" }}>GSTIN:</p>
-            <h3>10CIVPK3547B3ZE</h3>
-          </div>
-          <div style={{ textAlign: "center" }}>
-            <h2>TAX INVOICE (Vehicle)</h2>
-          </div>
-          <button
-            className="Printbtn"
-            onClick={handleDownloadPDF}
-            disabled={printing || disabledButton}
-          >
-            {printing ? "" : "Print"}
-          </button>
-        </div>
-      </div>
-
-      <hr
-        style={{
-          width: "100%",
-          backgroundColor: "black",
-          height: "2px",
-          marginLeft: "auto",
-          marginRight: "auto",
-          marginTop: "-10px",
-        }}
-      />
-
-      {/* ---------------form----------------- */}
-
-      <form
-        style={{ marginTop: "15px", }}
-        action="#"
-        method="POST"
-        onSubmit={onhandleSubmit}
-      >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-evenly",
-          }}
-        >
-          <div>
-            <div class="form-group">
-              <span>
-                Customer Name<span style={{ color: "red" }}>*</span><span style={{marginLeft:"10px"}}>:</span>
-              </span>
-              <input
-                type="text"
-                value={name}
-                onChange={onNameChange}
-                name="customer_name" placeholder="Enter Customer Name"  
-                style={{
-                  borderColor:
-                    name?.trim() === "" && mandatoryFieldFilled ? "red" : "",
-                }}
-              />
-            </div>
-            <div class="form-group">
-              <span>Institution Type <span style={{marginLeft:"25px"}}>:</span></span>
-              <input type="text" name="invoice_name" />
-            </div>
-            <div class="form-group">
-              <span>Institution/Deptt <span style={{marginLeft:"16px"}}>:</span><br/>Name</span>
-              <input type="text" name="customer_gstin" />
-            </div>
-            <div class="form-group">
-              <span>
-                S/O | D/O | W/O <span style={{ color: "red" }}>*</span><span style={{marginLeft:"5px"}}>:</span>
-              </span>
-              <input
-                type="text"
-                value={parentName}
-                onChange={onParentChange}
-                name="parent_name"
-                style={{
-                  borderColor:
-                    parentName?.trim() === "" && mandatoryFieldFilled
-                      ? "red"
-                      : "",
-                }}
-              />
-            </div>
-            <div class="form-group">
-              <span>Customer GSTIN <span style={{marginLeft:"16px"}}>:</span></span>
-              <input type="tel" name="phone" />
-            </div>
-            <div class="form-group">
-              <span>
-                Phone <span style={{ color: "red" }}>*</span><span style={{marginLeft:"73px"}}>:</span>
-              </span>
-              <input
-                type="text"
-                value={phone}
-                onChange={onPhoneChange}
-                name="phone_change"
-                style={{
-                  borderColor:
-                    phone?.trim() === "" && mandatoryFieldFilled ? "red" : "",
-                }}
-              />
-            </div>
-
-            <div class="form-group">
-              <span>
-                Aadhar Number <span style={{ color: "red" }}>*</span><span style={{marginLeft:"6px"}}>:</span>
-              </span>
-              <input
-                type="text"
-                value={adhar}
-                onChange={onAdharChange}
-                name="aadhar_number"
-                style={{
-                  borderColor:
-                    adhar?.trim() === "" && mandatoryFieldFilled ? "red" : "",
-                }}
-              />
-            </div>
-
-            <div class="form-group">
-              <span>
-                Bill To Address <span style={{ color: "red" }}>*</span><span style={{marginLeft:"15px"}}>:</span>
-              </span>
-              {/* <input
-                type="text"
-                value={address}
-                onChange={onAddressChange}
-                name="address"
-                style={{
-                  borderColor:
-                    address?.trim() === "" && mandatoryFieldFilled ? "red" : "",
-                }}
-                
-              /> */}
-
-              <textarea name="address" rows="2" cols="30" value={address} onChange={onAddressChange} style={{borderColor: address?.trim() === "" && mandatoryFieldFilled ? "red" : "",minHeight:"50px"}}></textarea>
-            </div>
-
-            <div class="form-group">
-              <span>Delivery Address <span style={{marginLeft:"15px"}}>:</span></span>
-              <textarea style={{minHeight:"50px"}} name="delivery_address" row="5" cols="30"  placeholder="MAA SERVICES,NEAR BANA MORE,BUS STOP,PS-KHIZERSARAI GAYA-82423 (BIHAR) Bihar [State Code : 10]" readOnly></textarea>
-
-              {/* <input style={{fontSize:"15px"}}
-                type="text"
-                placeholder="MAA SERVICES,NEAR BANA MORE,BUS STOP,PS-KHIZERSARAI GAYA-824233(BIHAR) Bihar [State Code : 10]"
-                readOnly
-              /> */}
-            </div>
-          </div>
-          <div>
-            <div class="form-group">
-              <span>
-                Invoice No. <span style={{ color: "red" }}>*</span><span style={{marginLeft:"35px"}}>:</span>
-              </span>
-              <input
-                type="text"
-                value={invoice}
-                onChange={onInvoiceChange}
-                name="invoice"
-                style={{
-                  borderColor:
-                    invoice?.trim() === "" && mandatoryFieldFilled ? "red" : "",
-                }}
-              />
-            </div>
-            <div class="form-group">
-              <span>
-                Invoice Date <span style={{ color: "red" }}>*</span><span style={{marginLeft:"28px"}}>:</span>
-              </span>
-              <input
-                type="date"
-                value={Date}
-                onChange={onDateChange}
-                name="invoice_name"
-                style={{
-                  borderColor:
-                    Date?.trim() === "" && mandatoryFieldFilled ? "red" : "",
-                }}
-              />
-            </div>
-
-            <div class="form-group">
-              <span>Wheather Tax <span style={{marginLeft:"35px"}}>:</span><br/>Payable on<br/>reverse Charge</span>
-              <input
-                type="text"
-                placeholder="No"
-                readOnly
-                name="customer_gstin"
-              />
-            </div>
-            <div class="form-group">
-              <span>Booking No. <span style={{marginLeft:"42px"}}>:</span></span>
-              <input type="text" name="institutional_name" />
-            </div>
-            <div class="form-group">
-              <span>
-                Chassis No. <span style={{ color: "red" }}>*</span><span style={{marginLeft:"35px"}}>:</span>
-              </span>
-              <input
-                type="tel"
-                value={Chassis}
-                onChange={onchassisChange}
-                name="chassis"
-                style={{
-                  borderColor:
-                    Chassis?.trim() === "" && mandatoryFieldFilled ? "red" : "",
-                }}
-              />
-            </div>
-            <div class="form-group">
-              <span>
-                Engine <span style={{ color: "red" }}>*</span><span style={{marginLeft:"68px"}}>:</span>
-              </span>
-              <input
-                type="tel"
-                value={engine}
-                onChange={onEngineChange}
-                name="engine"
-                style={{
-                  borderColor:
-                    engine?.trim() === "" && mandatoryFieldFilled ? "red" : "",
-                }}
-              />
-            </div>
-            <div class="form-group">
-              <span>
-                Color<span style={{ color: "red" }}>*</span><span style={{marginLeft:"82px"}}>:</span>
-              </span>
-              <input
-                type="tel"
-                value={color}
-                onChange={onColorChange}
-                name="color"
-                style={{
-                  borderColor:
-                    color?.trim() === "" && mandatoryFieldFilled ? "red" : "",
-                }}
-              />
-            </div>
-            <div class="form-group">
-              <span>
-                Hypothecated<span style={{ color: "red" }}>*</span><span style={{marginLeft:"22px"}}>:</span><br/> No. 
-              </span>
-              <input
-                type="tel"
-                value={hyphocated}
-                onChange={onHypocatedChange}
-                name="hypocated"
-                style={{
-                  borderColor:
-                    hyphocated?.trim() === "" && mandatoryFieldFilled
-                      ? "red"
-                      : "",
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      </form>
-
-      <hr
-        style={{
-          width: "100%",
-          backgroundColor: "black",
-          height: "2px",
-          marginLeft: "auto",
-          marginRight: "auto",
-          marginTop: "10px",
-        }}
-      />
-
-      {/*--------------Table-------------------  */}
-
-      <div className="centered-div">
-        <table id="interactiveTable">
-          <tr onClick={() => handleRowClick(1)}>
-            <th colspan="2">S.NO.</th>
-            <th colspan="2">MODEL</th>
-            <th colspan="2">DESCRIPTION<br/>/HEN/SAC CODE</th>
-            <th colspan="2">UNIT PRICE</th>
-            <th colspan="2">QTY</th>
-            <th colspan="2">DISCOUNT</th>
-            <th colspan="2">TAXABLE AMOUNT</th>
-            <th colspan="2">CESS</th>
-            <th colspan="2">SGST/<br/>UTGST(%)</th>
-            <th colspan="2">SGST/<br/>UTGST</th>
-            <th colspan="2">CGST(%)</th>
-            <th colspan="2">CGST</th>
-            <th colspan="2">FAME <br/>SUBSIDY</th>
-            <th colspan="2">AMOUNT<br/>(Rs)</th>
-          </tr>
-          <tr>
-            <td colspan="2">
-              {" "}
-              {selectedRow === 1 ? "1. " : "1."}
-              {/* <input type="text" id="r1c3" /> */}
-              <textarea type="text" id="r1c3"></textarea>
-
-            </td>
-            <td colspan="2">
-              {/* <input type="text" id="r1c4" /> */}
-              <textarea type="text" id="r1c4"></textarea>
-            </td>
-            <td colspan="2">
-              {/* <input
-                onChange={onModelChange}
-                value={model}
-                type="text"
-                id="r1c5"
-              /> */}
-              <textarea type="text" id="r1c5" onChange={onModelChange} value={model}></textarea>
-            </td>
-            <td colspan="2">
-              {/* <input type="text" value={unitPrice} id="r1c6" /> */}
-              <textarea type="text" id="r1c6" value={unitPrice}></textarea>
-            </td>
-            <td colspan="2">
-              {/* <input type="text" id="r1c7" /> */}
-              <textarea type="text" id="r1c7"></textarea>
-            </td>
-            <td colspan="2">
-              {/* <input
-                onChange={handleDiscountChange}
-                value={discount}
-                type="text"
-                id="r1c7"
-              /> */}
-              <textarea type="text" id="r1c7" onChange={handleDiscountChange} value={discount} readOnly>0.00</textarea>
-            </td>
-            <td colspan="2">
-              {/* <input type="text" value={taxableAmount} id="r1c7" /> */}
-              <textarea type="text" id="r1c7" value={taxableAmount}></textarea>
-            </td>
-            <td colspan="2">
-              {/* <input type="text" id="r1c7" /> */}
-              <textarea type="text" id="r1c7"></textarea>
-            </td>
-            <td colspan="2">
-              {/* <input type="text" id="r1c7" placeholder="14" readOnly /> */}
-              <textarea type="text" id="r1c7" readOnly>14</textarea>
-            </td>
-            <td colspan="2">
-              {/* <input type="text" value={sgstAmount} id="r1c7" /> */}
-              <textarea type="text" id="r1c7" value={sgstAmount}></textarea>
-            </td>
-            <td colspan="2">
-              {/* <input type="text" id="r1c7" placeholder="14" readOnly /> */}
-              <textarea type="text" id="r1c7" readOnly>14</textarea>
-            </td>
-            <td colspan="2">
-              {/* <input type="text" value={cgstAmount} id="r1c7" /> */}
-              <textarea type="text" id="r1c7" value={cgstAmount}></textarea>
-            </td>
-            <td colspan="2">
-              {/* <input type="text" id="r1c7" /> */}
-              <textarea type="text" id="r1c7"></textarea>
-            </td>
-            <td colspan="2">
-              {/* <input
-                type="text"
-                onChange={onAmountChange}
-                value={Amount}
-                id="r1c7"
-              /> */}
-              <textarea type="text" id="r1c7" onChange={onAmountChange} value={Amount}></textarea>
-            </td>
-          </tr>
-          <tr>
-            <td style={{fontWeight:"bold"}} colspan="12">SUB TOTAL</td>
-            <td colspan="2">
-              {/* <input type="text" value={taxableAmount} id="r2c4" /> */}
-              <textarea type="text" id="r1c4" value={taxableAmount}></textarea>
-            </td>
-            <td colspan="2">
-              {/* <input type="text" id="r2c5" placeholder="0.00" readOnly /> */}
-              <textarea type="text" id="r1c5" readOnly>0.00</textarea>
-            </td>
-            <td colspan="2">
-              {/* <input type="text" id="r2c6" /> */}
-              <textarea type="text" id="r1c6"></textarea>
-            </td>
-            <td colspan="2">
-              {/* <input type="text" value={sgstAmount} id="r2c7" /> */}
-              <textarea type="text" id="r2c7" value={sgstAmount}></textarea>
-            </td>
-            <td colspan="2">
-              {/* <input type="text" id="r2c7" /> */}
-              <textarea type="text" id="r2c7"></textarea>
-            </td>
-            <td colspan="2">
-              {/* <input type="text" value={cgstAmount} id="r2c7" /> */}
-              <textarea type="text" id="r2c7" value={cgstAmount}></textarea>
-            </td>
-            <td colspan="2">
-              {/* <input type="text" id="r2c7" placeholder="0.00" readOnly /> */}
-              <textarea type="text" id="r2c7" readOnly>0.00</textarea>
-            </td>
-            <td colspan="2">
-              {/* <input type="text" value={AmountOutput} id="r2c7" /> */}
-              <textarea type="text" id="r2c7" value={AmountOutput}></textarea>
-            </td>
-          </tr>
-          <tr>
-            <td style={{fontWeight:"bold"}} colspan="26">ROUND OFF</td>
-            <td colspan="2">
-              {/* <input type="text" placeholder="-0.00" id="r2c4" readOnly /> */}
-              <textarea type="text" id="r2c4" readOnly>-0.00</textarea>
-            </td>
-          </tr>
-          <tr>
-            <td style={{fontWeight:"bold"}} colspan="26">TOTAL AMOUNT</td>
-            <td colspan="2">
-              {/* <input type="text" value={AmountOutput} id="r2c4" /> */}
-              <textarea type="text" id="r2c4" value={AmountOutput}></textarea>
-            </td>
-          </tr>
-        </table>
-
-        <br />
-        <br />
-
-        <table>
-          <tr>
-            <td style={{fontWeight:"bold"}} colspan="26">AMOUNT IN WORDS</td>
-            <td colspan="2">
-              {/* <input style={{width:"600px"}} type="text" value={amountInWord} id="r2c4" /> */}
-              <textarea style={{width:"500px",}} type="text" id="r2c4" value={amountInWord}></textarea>
-            </td>
-
-            <button style={{}}
-              className="CalculateBtn"
-              onClick={handleData}
-              disabled={!mandatoryFieldFilled || disabledButton}
+            <button
+              className="Printbtn"
+              onClick={handleDownloadPDF}
+              disabled={printing || disabledButton}
             >
-              {disabledButton ? "" : "Calculate"}
+              {printing ? "" : "Print"}
             </button>
-          </tr>
-        </table>
-
+          </div>
         </div>
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          marginTop: "200px",
-        }}
-      >
-        <div
+        <hr
           style={{
-            height: "5rem",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-end",
+            width: "100%",
+            backgroundColor: "black",
+            height: "2px",
+            marginLeft: "auto",
+            marginRight: "auto",
+            marginTop: "-10px",
           }}
+        />
+
+        {/* ---------------form----------------- */}
+
+        <form
+          style={{ marginTop: "15px" }}
+          action="#"
+          method="POST"
+          onSubmit={onhandleSubmit}
         >
-          <hr
+          <div
             style={{
-              width: "100%",
-              backgroundColor: "black",
-              height: "1px",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-evenly",
             }}
-          />
-          <p style={{ marginTop: "-5px" }}>Sign of his customer or his agent</p>
+          >
+            <div>
+              <div class="form-group">
+                <span>
+                  Customer Name<span style={{ color: "red" }}>*</span>
+                  <span style={{ marginLeft: "10px" }}>:</span>
+                </span>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={onNameChange}
+                  name="customer_name"
+                  placeholder="Enter Customer Name"
+                  style={{
+                    borderColor:
+                      name?.trim() === "" && mandatoryFieldFilled ? "red" : "",
+                  }}
+                />
+              </div>
+              <div class="form-group">
+                <span>
+                  Institution Type <span style={{ marginLeft: "25px" }}>:</span>
+                </span>
+                <input type="text" name="invoice_name" />
+              </div>
+              <div class="form-group">
+                <span>
+                  Institution/Deptt{" "}
+                  <span style={{ marginLeft: "16px" }}>:</span>
+                  <br />
+                  Name
+                </span>
+                <input type="text" name="customer_gstin" />
+              </div>
+              <div class="form-group">
+                <span>
+                  S/O | D/O | W/O <span style={{ color: "red" }}>*</span>
+                  <span style={{ marginLeft: "5px" }}>:</span>
+                </span>
+                <input
+                  type="text"
+                  value={parentName}
+                  onChange={onParentChange}
+                  name="parent_name"
+                  style={{
+                    borderColor:
+                      parentName?.trim() === "" && mandatoryFieldFilled
+                        ? "red"
+                        : "",
+                  }}
+                />
+              </div>
+              <div class="form-group">
+                <span>
+                  Customer GSTIN <span style={{ marginLeft: "16px" }}>:</span>
+                </span>
+                <input type="tel" name="phone" />
+              </div>
+              <div class="form-group">
+                <span>
+                  Phone <span style={{ color: "red" }}>*</span>
+                  <span style={{ marginLeft: "73px" }}>:</span>
+                </span>
+                <input
+                  type="text"
+                  value={phone}
+                  onChange={onPhoneChange}
+                  name="phone_change"
+                  style={{
+                    borderColor:
+                      phone?.trim() === "" && mandatoryFieldFilled ? "red" : "",
+                  }}
+                />
+              </div>
+
+              <div class="form-group">
+                <span>
+                  Aadhar Number <span style={{ color: "red" }}>*</span>
+                  <span style={{ marginLeft: "6px" }}>:</span>
+                </span>
+                <input
+                  type="text"
+                  value={adhar}
+                  onChange={onAdharChange}
+                  name="aadhar_number"
+                  style={{
+                    borderColor:
+                      adhar?.trim() === "" && mandatoryFieldFilled ? "red" : "",
+                  }}
+                />
+              </div>
+
+              <div class="form-group">
+                <span>
+                  Bill To Address <span style={{ color: "red" }}>*</span>
+                  <span style={{ marginLeft: "15px" }}>:</span>
+                </span>
+
+                <textarea
+                  name="address"
+                  rows="2"
+                  cols="30"
+                  value={address}
+                  onChange={onAddressChange}
+                  style={{
+                    borderColor:
+                      address?.trim() === "" && mandatoryFieldFilled
+                        ? "red"
+                        : "",
+                    minHeight: "50px",
+                  }}
+                ></textarea>
+              </div>
+
+              <div class="form-group">
+                <span>
+                  Delivery Address <span style={{ marginLeft: "15px" }}>:</span>
+                </span>
+                <textarea
+                  style={{ minHeight: "50px" }}
+                  name="delivery_address"
+                  row="5"
+                  cols="30"
+                  placeholder="MAA SERVICES,NEAR BANA MORE,BUS STOP,PS-KHIZERSARAI GAYA-82423 (BIHAR) Bihar [State Code : 10]"
+                  readOnly
+                ></textarea>
+              </div>
+            </div>
+            <div>
+              <div class="form-group">
+                <span>
+                  Invoice No. <span style={{ color: "red" }}>*</span>
+                  <span style={{ marginLeft: "35px" }}>:</span>
+                </span>
+                <input
+                  type="text"
+                  value={invoice}
+                  onChange={onInvoiceChange}
+                  name="invoice"
+                  style={{
+                    borderColor:
+                      invoice?.trim() === "" && mandatoryFieldFilled
+                        ? "red"
+                        : "",
+                  }}
+                />
+              </div>
+              <div class="form-group">
+                <span>
+                  Invoice Date <span style={{ color: "red" }}>*</span>
+                  <span style={{ marginLeft: "28px" }}>:</span>
+                </span>
+                <input
+                  type="date"
+                  value={Date}
+                  onChange={onDateChange}
+                  name="invoice_name"
+                  style={{
+                    borderColor:
+                      Date?.trim() === "" && mandatoryFieldFilled ? "red" : "",
+                  }}
+                />
+              </div>
+
+              <div class="form-group">
+                <span>
+                  Wheather Tax <br />
+                  Payable on <span style={{ marginLeft: "52px" }}>:</span>
+                  <br />
+                  reverse Charge
+                </span>
+                <input
+                  type="text"
+                  placeholder="No"
+                  readOnly
+                  name="customer_gstin"
+                />
+              </div>
+              <div class="form-group">
+                <span>
+                  Booking No. <span style={{ marginLeft: "42px" }}>:</span>
+                </span>
+                <input type="text" name="institutional_name" />
+              </div>
+              <div class="form-group">
+                <span>
+                  Chassis No. <span style={{ color: "red" }}>*</span>
+                  <span style={{ marginLeft: "35px" }}>:</span>
+                </span>
+                <input
+                  type="tel"
+                  value={Chassis}
+                  onChange={onchassisChange}
+                  name="chassis"
+                  style={{
+                    borderColor:
+                      Chassis?.trim() === "" && mandatoryFieldFilled
+                        ? "red"
+                        : "",
+                  }}
+                />
+              </div>
+              <div class="form-group">
+                <span>
+                  Engine <span style={{ color: "red" }}>*</span>
+                  <span style={{ marginLeft: "68px" }}>:</span>
+                </span>
+                <input
+                  type="tel"
+                  value={engine}
+                  onChange={onEngineChange}
+                  name="engine"
+                  style={{
+                    borderColor:
+                      engine?.trim() === "" && mandatoryFieldFilled
+                        ? "red"
+                        : "",
+                  }}
+                />
+              </div>
+              <div class="form-group">
+                <span>
+                  Color<span style={{ color: "red" }}>*</span>
+                  <span style={{ marginLeft: "82px" }}>:</span>
+                </span>
+                <input
+                  type="tel"
+                  value={color}
+                  onChange={onColorChange}
+                  name="color"
+                  style={{
+                    borderColor:
+                      color?.trim() === "" && mandatoryFieldFilled ? "red" : "",
+                  }}
+                />
+              </div>
+              <div class="form-group">
+                <span>
+                  Hypothecated<span style={{ color: "red" }}>*</span>
+                  <br /> No. <span style={{ marginLeft: "105px" }}>:</span>
+                </span>
+                <input
+                  type="tel"
+                  value={hyphocated}
+                  onChange={onHypocatedChange}
+                  name="hypocated"
+                  style={{
+                    borderColor:
+                      hyphocated?.trim() === "" && mandatoryFieldFilled
+                        ? "red"
+                        : "",
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <hr
+          style={{
+            width: "100%",
+            backgroundColor: "black",
+            height: "2px",
+            marginLeft: "auto",
+            marginRight: "auto",
+            marginTop: "10px",
+          }}
+        />
+
+        {/*--------------Table-------------------  */}
+
+        <div className="centered-div">
+          <table id="interactiveTable">
+            <tr onClick={() => handleRowClick(1)}>
+              <th colspan="2">S.NO.</th>
+              <th colspan="2">MODEL</th>
+              <th colspan="2">
+                DESCRIPTION
+                <br />
+                /HEN/SAC CODE
+              </th>
+              <th colspan="2">UNIT PRICE</th>
+              <th colspan="2">QTY</th>
+              <th colspan="2">DISCOUNT</th>
+              <th colspan="2">TAXABLE AMOUNT</th>
+              <th colspan="2">CESS</th>
+              <th colspan="2">
+                SGST/
+                <br />
+                UTGST(%)
+              </th>
+              <th colspan="2">
+                SGST/
+                <br />
+                UTGST
+              </th>
+              <th colspan="2">CGST(%)</th>
+              <th colspan="2">CGST</th>
+              <th colspan="2">
+                FAME <br />
+                SUBSIDY
+              </th>
+              <th colspan="2">
+                AMOUNT
+                <br />
+                (Rs)
+              </th>
+            </tr>
+            <tr>
+              <td colspan="2">
+                {" "}
+                {selectedRow === 1 ? "1. " : "1."}
+                <textarea type="text" id="r1c3"></textarea>
+              </td>
+
+              <td className="modelPrinting" colspan="2">
+                
+                {model === "other" ? (
+                  <textarea name="model" value={modelInput} onChange={handleModelInputChange} />
+                ) :(
+                  <select name="model" value={model} onChange={handleModelChange}>
+                    <option value="">Select</option>
+                    {bikeModel.map((bike)=>(
+                      <option key={bike.model} value={bike.model}>
+                        {bike.model}
+                      </option>
+                    ))}
+                    <option value="other">Other</option>
+                  </select>
+                )}
+
+                {/* <select value={model} onChange={handleModelChange}>
+                  <option value="">Select</option>
+                  {bikeModel.map((bike) => (
+                    <option key={bike.model} value={bike.model}>
+                      {bike.model}
+                    </option>
+                  ))}
+                  <option value="other">Other</option>
+                </select>
+                */}
+              </td>
+
+              <td colspan="2">
+            
+                {model === "other" ? (
+                  <textarea
+                    value={descriptionInput}
+                    onChange={handleDesriptionChange}
+                  />
+                ) : (
+                  <textarea type="text" value={description} readOnly />
+                  
+                 )}
+                
+              </td>
+
+              <td colspan="2">
+                <textarea type="text" id="r1c6" value={unitPrice}></textarea>
+              </td>
+              <td colspan="2">
+                <textarea type="text" id="r1c7"></textarea>
+              </td>
+              <td colspan="2">
+                <textarea
+                  type="text"
+                  id="r1c7"
+                  onChange={handleDiscountChange}
+                  value={discount}
+                  readOnly
+                >
+                  0.00
+                </textarea>
+              </td>
+              <td colspan="2">
+                <textarea
+                  type="text"
+                  id="r1c7"
+                  value={taxableAmount}
+                ></textarea>
+              </td>
+              <td colspan="2">
+                <textarea type="text" id="r1c7"></textarea>
+              </td>
+              <td colspan="2">
+                <textarea type="text" id="r1c7" readOnly>
+                  14
+                </textarea>
+              </td>
+              <td colspan="2">
+                <textarea type="text" id="r1c7" value={sgstAmount}></textarea>
+              </td>
+              <td colspan="2">
+                <textarea type="text" id="r1c7" readOnly>
+                  14
+                </textarea>
+              </td>
+              <td colspan="2">
+                <textarea type="text" id="r1c7" value={cgstAmount}></textarea>
+              </td>
+              <td colspan="2">
+                <textarea type="text" id="r1c7"></textarea>
+              </td>
+              <td colspan="2">
+                <textarea
+                  type="text"
+                  id="r1c7"
+                  onChange={onAmountChange}
+                  value={Amount}
+                ></textarea>
+              </td>
+            </tr>
+            <tr>
+              <td style={{ fontWeight: "bold" }} colspan="12">
+                SUB TOTAL
+              </td>
+              <td colspan="2">
+                <textarea
+                  type="text"
+                  id="r1c4"
+                  value={taxableAmount}
+                ></textarea>
+              </td>
+              <td colspan="2">
+                <textarea type="text" id="r1c5" readOnly>
+                  0.00
+                </textarea>
+              </td>
+              <td colspan="2">
+                <textarea type="text" id="r1c6"></textarea>
+              </td>
+              <td colspan="2">
+                <textarea type="text" id="r2c7" value={sgstAmount}></textarea>
+              </td>
+              <td colspan="2">
+                <textarea type="text" id="r2c7"></textarea>
+              </td>
+              <td colspan="2">
+                <textarea type="text" id="r2c7" value={cgstAmount}></textarea>
+              </td>
+              <td colspan="2">
+                <textarea type="text" id="r2c7" readOnly>
+                  0.00
+                </textarea>
+              </td>
+              <td colspan="2">
+                <textarea type="text" id="r2c7" value={AmountOutput}></textarea>
+              </td>
+            </tr>
+            <tr>
+              <td style={{ fontWeight: "bold" }} colspan="26">
+                ROUND OFF
+              </td>
+              <td colspan="2">
+                <textarea type="text" id="r2c4" readOnly>
+                  -0.00
+                </textarea>
+              </td>
+            </tr>
+            <tr>
+              <td style={{ fontWeight: "bold" }} colspan="26">
+                TOTAL AMOUNT
+              </td>
+              <td colspan="2">
+                <textarea type="text" id="r2c4" value={AmountOutput}></textarea>
+              </td>
+            </tr>
+          </table>
+
+          <br />
+          <br />
+
+          <table>
+            <tr>
+              <td style={{ fontWeight: "bold" }} colspan="26">
+                AMOUNT IN WORDS
+              </td>
+              <td colspan="2">
+                <textarea
+                  style={{ width: "500px" }}
+                  type="text"
+                  id="r2c4"
+                  value={amountInWord}
+                ></textarea>
+              </td>
+
+              <button
+                style={{}}
+                className="CalculateBtn"
+                onClick={handleData}
+                disabled={!mandatoryFieldFilled || disabledButton}
+              >
+                {disabledButton ? "" : "Calculate"}
+              </button>
+            </tr>
+          </table>
         </div>
 
         <div
           style={{
-            height: "5rem",
             display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-end",
+            justifyContent: "space-around",
+            marginTop: "200px",
           }}
         >
-          <div>
-            <p style={{ display: "flex", justifyContent: "center" }}>
-              For MAA SERVICES(68530)
-            </p>
-
+          <div
+            style={{
+              height: "5rem",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-end",
+            }}
+          >
             <hr
               style={{
                 width: "100%",
@@ -973,268 +1085,254 @@ const Form = () => {
                 height: "1px",
               }}
             />
-            <p
-              style={{
-                marginTop: "-5px",
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              Authorised Signature
+            <p style={{ marginTop: "-5px" }}>
+              Sign of his customer or his agent
             </p>
           </div>
+
+          <div
+            style={{
+              height: "5rem",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-end",
+            }}
+          >
+            <div>
+              <p style={{ display: "flex", justifyContent: "center" }}>
+                For MAA SERVICES(68530)
+              </p>
+
+              <hr
+                style={{
+                  width: "100%",
+                  backgroundColor: "black",
+                  height: "1px",
+                }}
+              />
+              <p
+                style={{
+                  marginTop: "-5px",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                Authorised Signature
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <br />
-      <br />
+        <br />
+        <br />
 
-      {/* <hr
+        {/* <hr
         style={{
           width: "100%",
           backgroundColor: "black",
           height: "2px",
           marginLeft: "auto",
           marginRight: "auto",
+          marginTop:"-40px",
         }}
       /> */}
-      
 
-      {/* ------------------- Footer content------------- */}
+        {/* ------------------- Footer content------------- */}
 
-      <div
-        style={{
-          marginLeft: "auto",
-          marginRight: "auto",
-          maxWidth: "1020px",
-          pageBreakAfter:"always",
-          padding:"0",
-          margin:"0",
-          marginTop:"-30px",
-          overflow:"hidden",
-          position:"relative",
-          width:"100%",
+        <div
+          style={{
+            // marginLeft: "auto",
+            // marginRight: "auto",
+            // maxWidth: "1020px",
 
+            marginTop: "-30px",
+            overflow: "hidden",
+            // position: "relative",
+            // width: "100%",
+            maxWidth:"100%",
+            wordWrap:"break-word",
+            overflowWrap:"break-word",
 
-          // textAlign: "left",
-          
-        }}
-      >
-        {footer && (
-          <div style={{}}>
+            
+
+          }}
+        >
+          {footer && (
             <div style={{}}>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  // width: "100%",
-                }}
-              >
-                <img
-                  style={{ height: "140px", width: "140px",display:"block",margin:"0 auto", }}
-                  src="https://us.123rf.com/450wm/barks/barks2311/barks231100019/218048923-warranty-badge-label-illustration-5-years.jpg?ver=6"
-                  alt="logo"
-                />
-              </div>
-
-              <ul style={{}}>
-                <li>
-                  Standard Warranty of 2 year or 30,000 km. Warranty conditions
-                  as explained in Owner’s Manual{" "}
-                </li>
-                <li>
-                  Additional Extended Warranty(EW) is valid for 3 Years or
-                  45,000 Kms (whichever is earlier) to commence on the expiry of
-                  Standard warranty of 2 Years or 30,000 Kms (whichever is
-                  earlier).
-                </li>
-                <li>Warranty is applicable for only first owner of vehicle.</li>
-              </ul>
-            </div>
-
-            <div>
-              <p>Terms & Conditions:</p>
-              <p>Part A:</p>
-              <ul>
-                <li>
-                  Warranty claims in respect of such items like shock absorbers,
-                  speedometers etc. though claimed through us, are subject to
-                  acceptance of the respective manufacturers. In all such cases
-                  the decision of the respective manufacturer will be final and
-                  binding.
-                </li>
-                <li>
-                  Proprietary parts like tyres, tubes, battery and spark plugs
-                  are warranted by their respective manufacturers and should be
-                  claimed on them directly by the customer. Bajaj Auto Limited
-                  shall not be Liable to replace them though their dealer will
-                  give full assistance in preferring such claims.
-                </li>
-                <li>
-                  Bajaj Auto Limited undertake no liability in the matter of
-                  consequential loss or damage caused due to the failure of the
-                  parts. Delay, if any, at the repairing workshop in carrying
-                  out repair to vehicle shall not be a ground for extending the
-                  warranty period, nor shall it give any right to the customer
-                  for claiming any compensation for damages. Bajaj Auto Limited
-                  reserves the right either to repair or replace the defective
-                  parts.
-                </li>
-                <li>
-                  Where a defective part can be replaced by part/s of
-                  alternative brand/s, which are normally used by Bajaj Auto
-                  Limited in the course of manufacture, Bajaj Auto Limited
-                  reserves the right to carry out the replacement by a part or
-                  parts of any such alternative brand/s.
-                </li>
-                <li>
-                  This warranty and any claim arising there from is subject to
-                  Pune jurisdiction only.
-                </li>
-              </ul>
-              <p>Part B:</p>
-              <ul style={{}}>
-                <li>
-                  No claim for exchange or repair can be considered unless the
-                  customer :
-                </li>
-              </ul>
-              <ol type="a">
-                <li>
-                  Ensures that immediately upon detection of the defect, he
-                  approaches any nearest Authorised Bajaj Vehicle Dealers &
-                  Recommended Authorised Service Dealers with the concerned
-                  vehicle and enables him to remove and dispatch the part /
-                  parts attributing to the manufacturing defect to the Company.
-                </li>
-              </ol>
-              <ol type="b">
-                <li>
-                  Produces the Owner's Manual, in original, to enable that
-                  dealer to verify the details.
-                </li>
-              </ol>
-              <ul>
-                <li>
-                  It must be expressly understood that claims forwarded directly
-                  to us by the owner / customer will not be entertained at all
-                  and such defective part/parts thus forwarded by them will lie
-                  at our factory at their own risk, and this warranty shall not
-                  be enforceable.
-                </li>
-                <li>To avail benefits of warranty, following are mandatory</li>
-              </ul>
-              <ol type="1">
-                <li>Availing of Initial 3 Free Services without lapse.</li>
-              </ol>
-              <ol type="2">
-                <li>
-                  Availing paid schedule services at subsequent 5000 kms or 120
-                  days from last service whichever occurs first without any
-                  lapse till 5 years.
-                </li>
-              </ol>
-              <ol type="3">
-                <li>
-                  Availing of all above services at the Authorised Vehicle
-                  Dealers & Recommended Authorised Service Dealers.
-                </li>
-              </ol>
-              <ol type="4">
-                <li>
-                  Usage of only recommended engine oil “Bajaj DTS-i 10000” at
-                  specified frequency for max drain interval of 10,000 kms. &
-                  engine oil level top-up at 5000 kms.
-                </li>
-              </ol>
-              <ol type="5">
-                <li>
-                  Replacing mandatory periodic parts such as air filter, oil
-                  filter etc. as per periodic maintenance schedule.
-                </li>
-              </ol>
-              <p>Part C:</p>
-              <p>Further this warranty is NOT applicable to:</p>
-              <ul>
-                <li>
-                  Normal maintenance operations like brake & clutch adjustments,
-                  cleaning of fuel system, engine tune-up or such other
-                  adjustments.
-                </li>
-                <li>
-                  . Parts subjected to normal wear & tear like Clutch Plates,
-                  Brake Shoes, Chain, Sprockets, Fork Oil Seal, Spark Plug,
-                  Control Cables, Brake pads.
-                </li>
-              </ul>
-
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: "10px",
-                }}
-              >
-                <div style={{ width: "30%", justifyContent: "flex-end" }}>
-                  <div>
-                    <p style={{}}>
-                      Model :
-                      <span style={{ marginLeft: "15px" }}>{modelOutput}</span>
-                    </p>
-                    <p style={{ }}>
-                      Chassis No :{" "}
-                      <span style={{ marginLeft: "15px" }}>
-                        {chassisOutput}
-                      </span>
-                    </p>
-                  </div>
-
-                  <hr
+              <div style={{}}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    lineHeight: "normal",
+                    // width: "100%",
+                  }}
+                >
+                  <img
                     style={{
-                      width: "100%",
-                      backgroundColor: "black",
-                      height: "2px",
-                      marginLeft: "auto",
-                      marginRight: "auto",
-                      marginTop: "50px",
+                      height: "120px",
+                      width: "120px",
+                      // display: "block",
+                      // margin: "0 auto",
                     }}
+                    src="https://us.123rf.com/450wm/barks/barks2311/barks231100019/218048923-warranty-badge-label-illustration-5-years.jpg?ver=6"
+                    alt="logo"
                   />
-                  <p
-                    style={{
-                      
-                      marginTop: "-5px",
-                      display: "flex",
-                      justifyContent: "center",
-                    }}
-                  >
-                    Sign of Customer Or His Agent
-                  </p>
                 </div>
 
-                <div style={{ justifyContent: "flex-end", width: "30%" }}>
-                  <div>
-                    <p style={{}}>
-                      Customer Name :
-                      <span style={{ marginLeft: "15px" }}>{nameoutput}</span>
-                    </p>
-                    <p style={{ }}>
-                      Date of Sale :
-                      <span style={{ marginLeft: "15px" }}> {DateOutput}</span>
-                    </p>
-                  </div>
+                <ul style={{ lineHeight: "120%" }}>
+                  <li>
+                    Standard Warranty of 2 year or 30,000 km. Warranty
+                    conditions as explained in Owner’s Manual{" "}
+                  </li>
+                  <li>
+                    Additional Extended Warranty(EW) is valid for 3 Years or
+                    45,000 Kms (whichever is earlier) to commence on the expiry
+                    of Standard warranty of 2 Years or 30,000 Kms (whichever is
+                    earlier).
+                  </li>
+                  <li>
+                    Warranty is applicable for only first owner of vehicle.
+                  </li>
+                </ul>
+              </div>
 
-                  <div>
-                    <p
-                      style={{
-                        height: "-50px",
-                        
-                        display: "flex",
-                        justifyContent: "center",
-                      }}
-                    >
-                      For( MAA SERVICES (68530))
-                    </p>
+              <div style={{ lineHeight: "normal" }}>
+                <p style={{fontWeight:"bold"}}>Terms & Conditions:</p>
+                <p style={{fontWeight:"bold",marginTop:"-12px"}}>Part A:</p>
+                <ul style={{marginTop:"-14px"}}>
+                  <li>
+                    Warranty claims in respect of such items like shock
+                    absorbers, speedometers etc. though claimed through us, are
+                    subject to acceptance of therespective manufacturers. In
+                    all such cases the decision of the respective manufacturer
+                    will be final and binding.
+                  </li>
+                  <li>
+                    Proprietary parts like tyres, tubes, battery and spark plugs
+                    are warranted by their respective manufacturers and should
+                    be claimed on them directly by the customer. Bajaj Auto
+                    Limited shall not be Liable to replace them though their
+                    dealer will give full assistance in preferring such claims.
+                  </li>
+                  <li>
+                    Bajaj Auto Limited undertake no liability in the matter of
+                    consequential loss or damage caused due to the failure of
+                    the parts. Delay, if any, at the repairing workshop in
+                    carrying out repair to vehicle shall not be a ground for
+                    extending the warranty period, nor shall it give any right
+                    to the customer for claiming any compensation for damages.
+                    Bajaj Auto Limited reserves the right either to repair or
+                    replace the defective parts.
+                  </li>
+                  <li>
+                    Where a defective part can be replaced by part/s of
+                    alternative brand/s, which are normally used by Bajaj Auto
+                    Limited in the course of manufacture, Bajaj Auto Limited
+                    reserves the right to carry out the replacement by a part or
+                    parts of any such alternative brand/s.
+                  </li>
+                  <li>
+                    This warranty and any claim arising there from is subject to
+                    Pune jurisdiction only.
+                  </li>
+                </ul>
+                <p style={{fontWeight:"bold",marginTop:"-9px"}}>Part B:</p>
+                <ul style={{marginTop:"-15px"}}>
+                  <li>
+                    No claim for exchange or repair can be considered unless the
+                    customer :
+                  </li>
+                </ul>
+                <ol style={{marginTop:"-15px"}} type="a">
+                  <li>
+                    Ensures that immediately upon detection of the defect, he
+                    approaches any nearest Authorised Bajaj Vehicle Dealers &
+                    Recommended Authorised Service Dealers with the concerned
+                    vehicle and enables him to remove and dispatch the part /
+                    parts attributing to the manufacturing defect to the
+                    Company.
+                  </li>
+                </ol>
+                <ol style={{marginTop:"-15px"}} type="b">
+                  <li>
+                    Produces the Owner's Manual, in original, to enable that
+                    dealer to verify the details.
+                  </li>
+                </ol>
+                <ul style={{marginTop:"-15px"}}>
+                  <li>
+                    It must be expressly understood that claims forwarded
+                    directly to us by the owner / customer will not be
+                    entertained at all and such defective part/parts thus
+                    forwarded by them will lie at our factory at their own risk,
+                    and this warranty shall not be enforceable.
+                  </li>
+                  <li>
+                    To avail benefits of warranty, following are mandatory
+                  </li>
+                </ul>
+
+                <ol style={{marginTop:"-15px"}}>
+                  <li>Availing of Initial 3 Free Services without lapse.</li>
+                  <li>
+                    Availing paid schedule services at subsequent 5000 kms or
+                    120 days from last service whichever occurs first without
+                    any lapse till 5 years.
+                  </li>
+                  <li>
+                    Availing of all above services at the Authorised Vehicle
+                    Dealers & Recommended Authorised Service Dealers.
+                  </li>
+                  <li>
+                    Usage of only recommended engine oil “Bajaj DTS-i 10000” at
+                    specified frequency for max drain interval of 10,000 kms. &
+                    engine oil level top-up at 5000 kms.
+                  </li>
+                  <li>
+                    Replacing mandatory periodic parts such as air filter, oil
+                    filter etc. as per periodic maintenance schedule.
+                  </li>
+                </ol>
+               <p style={{fontWeight:"bold",marginTop:"-10px"}}>Part C:</p>
+                <p style={{marginTop:"-15px"}}>Further this warranty is NOT applicable to:</p>
+                <ul style={{marginTop:"-15px"}}>
+                  <li>
+                    Normal maintenance operations like brake & clutch
+                    adjustments, cleaning of fuel system, engine tune-up or such
+                    other adjustments.
+                  </li>
+                  <li>
+                    Parts subjected to normal wear & tear like Clutch Plates,
+                    Brake Shoes, Chain, Sprockets, Fork Oil Seal, Spark Plug,
+                    Control Cables, Brake pads.
+                  </li>
+                </ul>
+
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginTop: "10px",
+                  }}
+                >
+                  <div style={{ width: "30%", justifyContent: "flex-end" }}>
+                    <div>
+                      <p style={{}}>
+                        Model :
+                        <span style={{ marginLeft: "15px" }}>
+                          {modelOutput}
+                        </span>
+                      </p>
+                      <p style={{}}>
+                        Chassis No :{" "}
+                        <span style={{ marginLeft: "15px" }}>
+                          {chassisOutput}
+                        </span>
+                      </p>
+                    </div>
+
                     <hr
                       style={{
                         width: "100%",
@@ -1242,30 +1340,74 @@ const Form = () => {
                         height: "2px",
                         marginLeft: "auto",
                         marginRight: "auto",
-                        marginTop: "-3px",
+                        marginTop: "50px",
                       }}
                     />
                     <p
                       style={{
-                        
                         marginTop: "-5px",
                         display: "flex",
                         justifyContent: "center",
                       }}
                     >
-                      Authorised Signatory
+                      Sign of Customer Or His Agent
                     </p>
+                  </div>
+
+                  <div style={{ justifyContent: "flex-end", width: "30%" }}>
+                    <div>
+                      <p style={{}}>
+                        Customer Name :
+                        <span style={{ marginLeft: "15px" }}>{nameoutput}</span>
+                      </p>
+                      <p style={{}}>
+                        Date of Sale :
+                        <span style={{ marginLeft: "15px" }}>
+                          {" "}
+                          {DateOutput}
+                        </span>
+                      </p>
+                    </div>
+
+                    <div>
+                      <p
+                        style={{
+                          height: "-50px",
+
+                          display: "flex",
+                          justifyContent: "center",
+                        }}
+                      >
+                        For( MAA SERVICES (68530))
+                      </p>
+                      <hr
+                        style={{
+                          width: "100%",
+                          backgroundColor: "black",
+                          height: "2px",
+                          marginLeft: "auto",
+                          marginRight: "auto",
+                          marginTop: "-3px",
+                        }}
+                      />
+                      <p
+                        style={{
+                          marginTop: "-5px",
+                          display: "flex",
+                          justifyContent: "center",
+                        }}
+                      >
+                        Authorised Signatory
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
-   </div>
-      
-
   );
 };
 
