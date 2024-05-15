@@ -1,10 +1,10 @@
 import React from "react";
 import App from "../App.css";
 import { useState, useEffect } from "react";
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
+// import pdfMake from "pdfmake/build/pdfmake";
+// import pdfFonts from "pdfmake/build/vfs_fonts";
 
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
+// pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const Form = () => {
   const [showInvoice, setShowInvoice] = useState(false);
@@ -47,7 +47,7 @@ const Form = () => {
   // --------list of model and discription of bike---------------//
 
   const [bikeModel] = useState([
-    { model: "00DH50", description: "PULSAR 125 NEOX CB5" },
+    { model: "00DH50", description: "PULSAR 125 NEON CB5" },
     { model: "00DH41", description: "PULSAR 125 CAR SD" },
     { model: "00DH43", description: "PULSAR 125 CAR SP" },
     { model: "00DH42", description: "PULSAR 150 SD" },
@@ -551,7 +551,7 @@ const Form = () => {
           }}
         />
 
-        {/* ---------------form----------------- */}
+        {/* -------------------------form----------------------- */}
 
         <form
           style={{ marginTop: "15px" }}
@@ -569,7 +569,7 @@ const Form = () => {
             <div>
               <div class="form-group">
                 <span>
-                  Customer Name<span style={{ color: "red" }}>*</span>
+                  Customer Name<span className="red-star" style={{ color: "red",}}>*</span>
                   <span style={{ marginLeft: "10px" }}>:</span>
                 </span>
                 <input
@@ -581,6 +581,7 @@ const Form = () => {
                   style={{
                     borderColor:
                       name?.trim() === "" && mandatoryFieldFilled ? "red" : "",
+                      
                   }}
                 />
               </div>
@@ -601,7 +602,7 @@ const Form = () => {
               </div>
               <div class="form-group">
                 <span>
-                  S/O | D/O | W/O <span style={{ color: "red" }}>*</span>
+                  S/O | D/O | W/O <span className="red-star" style={{ color: "red" }}>*</span>
                   <span style={{ marginLeft: "5px" }}>:</span>
                 </span>
                 <input
@@ -625,7 +626,7 @@ const Form = () => {
               </div>
               <div class="form-group">
                 <span>
-                  Phone <span style={{ color: "red" }}>*</span>
+                  Phone <span className="red-star" style={{ color: "red" }}>*</span>
                   <span style={{ marginLeft: "73px" }}>:</span>
                 </span>
                 <input
@@ -642,7 +643,7 @@ const Form = () => {
 
               <div class="form-group">
                 <span>
-                  Aadhar Number <span style={{ color: "red" }}>*</span>
+                  Aadhar Number <span className="red-star" style={{ color: "red" }}>*</span>
                   <span style={{ marginLeft: "6px" }}>:</span>
                 </span>
                 <input
@@ -659,7 +660,7 @@ const Form = () => {
 
               <div class="form-group">
                 <span>
-                  Bill To Address <span style={{ color: "red" }}>*</span>
+                  Bill To Address <span className="red-star" style={{ color: "red" }}>*</span>
                   <span style={{ marginLeft: "15px" }}>:</span>
                 </span>
 
@@ -696,7 +697,7 @@ const Form = () => {
             <div>
               <div class="form-group">
                 <span>
-                  Invoice No. <span style={{ color: "red" }}>*</span>
+                  Invoice No. <span className="red-star" style={{ color: "red" }}>*</span>
                   <span style={{ marginLeft: "35px" }}>:</span>
                 </span>
                 <input
@@ -714,7 +715,7 @@ const Form = () => {
               </div>
               <div class="form-group">
                 <span>
-                  Invoice Date <span style={{ color: "red" }}>*</span>
+                  Invoice Date <span className="red-star" style={{ color: "red" }}>*</span>
                   <span style={{ marginLeft: "28px" }}>:</span>
                 </span>
                 <input
@@ -751,7 +752,7 @@ const Form = () => {
               </div>
               <div class="form-group">
                 <span>
-                  Chassis No. <span style={{ color: "red" }}>*</span>
+                  Chassis No. <span className="red-star" style={{ color: "red" }}>*</span>
                   <span style={{ marginLeft: "35px" }}>:</span>
                 </span>
                 <input
@@ -769,7 +770,7 @@ const Form = () => {
               </div>
               <div class="form-group">
                 <span>
-                  Engine <span style={{ color: "red" }}>*</span>
+                  Engine <span className="red-star" style={{ color: "red" }}>*</span>
                   <span style={{ marginLeft: "68px" }}>:</span>
                 </span>
                 <input
@@ -787,7 +788,7 @@ const Form = () => {
               </div>
               <div class="form-group">
                 <span>
-                  Color<span style={{ color: "red" }}>*</span>
+                  Color<span className="red-star" style={{ color: "red" }}>*</span>
                   <span style={{ marginLeft: "82px" }}>:</span>
                 </span>
                 <input
@@ -803,7 +804,7 @@ const Form = () => {
               </div>
               <div class="form-group">
                 <span>
-                  Hypothecated<span style={{ color: "red" }}>*</span>
+                  Hypothecated<span className="red-star" style={{ color: "red" }}>*</span>
                   <br /> No. <span style={{ marginLeft: "105px" }}>:</span>
                 </span>
                 <input
@@ -1322,7 +1323,8 @@ const Form = () => {
                       <p style={{}}>
                         Model :
                         <span style={{ marginLeft: "15px" }}>
-                          {modelOutput}
+                          {/* {modelOutput} */}
+                          {description}
                         </span>
                       </p>
                       <p style={{}}>

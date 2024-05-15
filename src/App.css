@@ -96,15 +96,20 @@ form textarea{
 
 }
 
-
-
-
-
 .form-group1{
   width:100%;
   min-height: 50px;
 
 }
+
+@media print{
+  .form-group > span .red-star{
+    display: none;
+   
+  }
+}
+
+
 
 
 
@@ -190,6 +195,17 @@ align-items: right;
     
   }
 };
+
+
+/* @media print {
+  .form-group > span.red-star {
+    display: none;
+  }
+} */
+
+
+
+
 
 
 /* @media print {
