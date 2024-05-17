@@ -1458,14 +1458,14 @@ const Form = () => {
                   <div style={{ width: "30%", justifyContent: "flex-end" }}>
                     <div>
                       <p style={{}}>
-                        Model :
-                        <span style={{ marginLeft: "15px" }}>
+                        Model <span style={{marginLeft:"30px"}}>:</span>
+                        <span style={{ marginLeft: "19px" }}>
                           {/* {modelOutput} */}
                           {description}
                         </span>
                       </p>
                       <p style={{}}>
-                        Chassis No :{" "}
+                        Chassis No <span>:</span>{" "}
                         <span style={{ marginLeft: "15px" }}>
                           {chassisOutput}
                         </span>
@@ -1496,11 +1496,11 @@ const Form = () => {
                   <div style={{ justifyContent: "flex-end", width: "30%" }}>
                     <div>
                       <p style={{}}>
-                        Customer Name :
+                        Customer Name <span>:</span>
                         <span style={{ marginLeft: "15px" }}>{nameoutput}</span>
                       </p>
                       <p style={{}}>
-                        Date of Sale :
+                        Date of Sale <span style={{marginLeft:"30px"}}>:</span>
                         <span style={{ marginLeft: "15px" }}>
                           {" "}
                           {DateOutput}
