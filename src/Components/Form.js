@@ -28,9 +28,9 @@ const Form = () => {
   const [color, setColor] = useState("");
   const [hyphocated, setHypocated] = useState("");
   const [model, setModel] = useState();
-  const[modelInput,setModelInput] = useState('');
+  const [modelInput, setModelInput] = useState("");
   const [description, setDescription] = useState("");
-  const[descriptionInput, setDescriptionInput] = useState("");
+  const [descriptionInput, setDescriptionInput] = useState("");
   const [modelOutput, setmodelOutput] = useState();
   const [Amount, setAmount] = useState();
   const [AmountOutput, setamountOutput] = useState();
@@ -43,48 +43,99 @@ const Form = () => {
   const [discount, setdiscount] = useState();
   const [amountInWord, setAmountInWord] = useState();
   const [mandatoryFieldFilled, setMandatoryFieldFilled] = useState(false);
+  const [selectedOption, setSelectedOption] = useState("");
+  const [otherValue, setOtherValue] = useState("");
+
+  // ----------------- List of options in Hypocated field ----------------//
+
+  const options = [
+    "CASH",
+    "INDUSIND BANK LTD.",
+    "BAJAJ AUTO FINANCE LTD.",
+    "SHRIRAM FINANCE LTD.",
+    "IDFC FIRST BANK LTD",
+    "CHOLA AMANDALAM INVESTMENT & FINANCE CO LTD.",
+    "OTHER",
+  ];
+
+  const handleChange = (e) => {
+    const { value } = e.target;
+    setSelectedOption(value);
+    if (value === "OTHER") {
+      setOtherValue("");
+    }
+    setHypocated(e.target.value);
+    setMandatoryFieldFilled(
+      name?.trim() !== "" &&
+        parentName?.trim() !== "" &&
+        phone?.trim() !== "" &&
+        adhar?.trim() !== "" &&
+        address?.trim() !== "" &&
+        invoice?.trim() !== "" &&
+        Date?.trim() !== "" &&
+        Chassis?.trim() !== "" &&
+        engine?.trim() !== "" &&
+        color?.trim() !== "" &&
+        e.target.value?.trim() !== ""
+    );
+  };
+
+  const handleOtherChange1 = (e) => {
+    setOtherValue(e.target.value);
+    setHypocated(e.target.value);
+    setMandatoryFieldFilled(
+      name?.trim() !== "" &&
+        parentName?.trim() !== "" &&
+        phone?.trim() !== "" &&
+        adhar?.trim() !== "" &&
+        address?.trim() !== "" &&
+        invoice?.trim() !== "" &&
+        Date?.trim() !== "" &&
+        Chassis?.trim() !== "" &&
+        engine?.trim() !== "" &&
+        color?.trim() !== "" &&
+        e.target.value?.trim() !== ""
+    );
+  };
 
   // --------list of model and discription of bike---------------//
 
   const [bikeModel] = useState([
-    { model: "00DH50", description: "PULSAR 125 NEON CB5" },
+    { model: "00DH50", description: "PULSAR 125 NEON CBS" },
     { model: "00DH41", description: "PULSAR 125 CAR SD" },
     { model: "00DH43", description: "PULSAR 125 CAR SP" },
     { model: "00DH42", description: "PULSAR 150 SD" },
     { model: "00JR30", description: "PULSAR N 150 SD" },
     { model: "00JR31", description: "PULSAR N 150 TD" },
-    { model: "00JR37", description: "PULSAR N TWIN ABS" },
+    { model: "00JR37", description: "PULSAR N 160 TWIN ABS" },
     { model: "00DH44", description: "PULSAR 150 TD" },
     { model: "00DY10", description: "CT 125 X" },
-    { model: "00JK36", description: "PLATINUM 110 DABS" },
-    { model: "00JK35", description: "PLATINUM 100 D" },
-    { model: "00PF35", description: "PLATINUM 100 ES" },
-    { model: "00DY08", description: "CT 110 XES" },
+    { model: "00JK36", description: "PLATINA 110 DABS" },
+    { model: "00JK35", description: "PLATINA 110 D" },
+    { model: "00PF35", description: "PLATINA 100 ES" },
+    { model: "00DY08", description: "CT 110 X ES" },
   ]);
 
   const handleModelChange = (e) => {
     const model = e.target.value;
     setModel(model);
-    if(model === "other"){
-      setModelInput('');
-    }else{
+    if (model === "other") {
+      setModelInput("");
+    } else {
       const selectedBike = bikeModel.find((bike) => bike.model === model);
       setDescription(selectedBike ? selectedBike.description : "");
     }
-   };
-
-
-  const handleModelInputChange=(e)=>{
-    setModelInput(e.target.value);
-    setModel('other');
-  }
-
- const handleDesriptionChange = (e) => {
-  setDescriptionInput(e.target.value);
-    setDescription(e.target.value);
-    
   };
 
+  const handleModelInputChange = (e) => {
+    setModelInput(e.target.value);
+    setModel("other");
+  };
+
+  const handleDesriptionChange = (e) => {
+    setDescriptionInput(e.target.value);
+    setDescription(e.target.value);
+  };
 
   //----------Function to handle row click-----------//
 
@@ -569,7 +620,10 @@ const Form = () => {
             <div>
               <div class="form-group">
                 <span>
-                  Customer Name<span className="red-star" style={{ color: "red",}}>*</span>
+                  Customer Name
+                  <span className="red-star" style={{ color: "red" }}>
+                    *
+                  </span>
                   <span style={{ marginLeft: "10px" }}>:</span>
                 </span>
                 <input
@@ -581,7 +635,6 @@ const Form = () => {
                   style={{
                     borderColor:
                       name?.trim() === "" && mandatoryFieldFilled ? "red" : "",
-                      
                   }}
                 />
               </div>
@@ -602,7 +655,10 @@ const Form = () => {
               </div>
               <div class="form-group">
                 <span>
-                  S/O | D/O | W/O <span className="red-star" style={{ color: "red" }}>*</span>
+                  S/O | D/O | W/O{" "}
+                  <span className="red-star" style={{ color: "red" }}>
+                    *
+                  </span>
                   <span style={{ marginLeft: "5px" }}>:</span>
                 </span>
                 <input
@@ -626,7 +682,10 @@ const Form = () => {
               </div>
               <div class="form-group">
                 <span>
-                  Phone <span className="red-star" style={{ color: "red" }}>*</span>
+                  Phone{" "}
+                  <span className="red-star" style={{ color: "red" }}>
+                    *
+                  </span>
                   <span style={{ marginLeft: "73px" }}>:</span>
                 </span>
                 <input
@@ -643,7 +702,10 @@ const Form = () => {
 
               <div class="form-group">
                 <span>
-                  Aadhar Number <span className="red-star" style={{ color: "red" }}>*</span>
+                  Aadhar Number{" "}
+                  <span className="red-star" style={{ color: "red" }}>
+                    *
+                  </span>
                   <span style={{ marginLeft: "6px" }}>:</span>
                 </span>
                 <input
@@ -660,7 +722,10 @@ const Form = () => {
 
               <div class="form-group">
                 <span>
-                  Bill To Address <span className="red-star" style={{ color: "red" }}>*</span>
+                  Bill To Address{" "}
+                  <span className="red-star" style={{ color: "red" }}>
+                    *
+                  </span>
                   <span style={{ marginLeft: "15px" }}>:</span>
                 </span>
 
@@ -697,7 +762,10 @@ const Form = () => {
             <div>
               <div class="form-group">
                 <span>
-                  Invoice No. <span className="red-star" style={{ color: "red" }}>*</span>
+                  Invoice No.{" "}
+                  <span className="red-star" style={{ color: "red" }}>
+                    *
+                  </span>
                   <span style={{ marginLeft: "35px" }}>:</span>
                 </span>
                 <input
@@ -715,7 +783,10 @@ const Form = () => {
               </div>
               <div class="form-group">
                 <span>
-                  Invoice Date <span className="red-star" style={{ color: "red" }}>*</span>
+                  Invoice Date{" "}
+                  <span className="red-star" style={{ color: "red" }}>
+                    *
+                  </span>
                   <span style={{ marginLeft: "28px" }}>:</span>
                 </span>
                 <input
@@ -752,7 +823,10 @@ const Form = () => {
               </div>
               <div class="form-group">
                 <span>
-                  Chassis No. <span className="red-star" style={{ color: "red" }}>*</span>
+                  Chassis No.{" "}
+                  <span className="red-star" style={{ color: "red" }}>
+                    *
+                  </span>
                   <span style={{ marginLeft: "35px" }}>:</span>
                 </span>
                 <input
@@ -770,7 +844,10 @@ const Form = () => {
               </div>
               <div class="form-group">
                 <span>
-                  Engine <span className="red-star" style={{ color: "red" }}>*</span>
+                  Engine{" "}
+                  <span className="red-star" style={{ color: "red" }}>
+                    *
+                  </span>
                   <span style={{ marginLeft: "68px" }}>:</span>
                 </span>
                 <input
@@ -788,7 +865,10 @@ const Form = () => {
               </div>
               <div class="form-group">
                 <span>
-                  Color<span className="red-star" style={{ color: "red" }}>*</span>
+                  Color
+                  <span className="red-star" style={{ color: "red" }}>
+                    *
+                  </span>
                   <span style={{ marginLeft: "82px" }}>:</span>
                 </span>
                 <input
@@ -802,7 +882,8 @@ const Form = () => {
                   }}
                 />
               </div>
-              <div class="form-group">
+
+              {/* <div class="form-group">
                 <span>
                   Hypothecated<span className="red-star" style={{ color: "red" }}>*</span>
                   <br /> No. <span style={{ marginLeft: "105px" }}>:</span>
@@ -819,6 +900,54 @@ const Form = () => {
                         : "",
                   }}
                 />
+              </div> */}
+
+              <div className="form-group">
+                <span>
+                  Hypothecated
+                  <span className="red-star" style={{ color: "red" }}>
+                    *
+                  </span>
+                  <span style={{ marginLeft: "20px" }}>:</span>
+                  <br />
+                  No.
+                </span>
+                {selectedOption !== "OTHER" ? (
+                  <select
+                    value={selectedOption}
+                    onChange={handleChange}
+                    style={{
+                      width: "57%",
+                      whiteSpace: "normal",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      verticalAlign: "left",
+                      borderColor:
+                        selectedOption === "" && mandatoryFieldFilled
+                          ? "red"
+                          : "",
+                    }}
+                  >
+                    <option value="">Select</option>
+                    {options.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <textarea
+                    value={otherValue}
+                    onChange={handleOtherChange1}
+                    placeholder="Enter other option"
+                    style={{
+                      borderColor:
+                        otherValue.trim() === "" && mandatoryFieldFilled
+                          ? "red"
+                          : "",
+                    }}
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -877,18 +1006,37 @@ const Form = () => {
             <tr>
               <td colspan="2">
                 {" "}
-                {selectedRow === 1 ? "1. " : "1."}
-                <textarea type="text" id="r1c3"></textarea>
+                {/* {selectedRow === 1 ? "1. " : "1."} */}
+                <textarea
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignContent: "center",
+                    padding: "10px",
+                    marginTop: "3px",
+                  }}
+                  type="text"
+                  id="r1c3"
+                >
+                  1.
+                </textarea>
               </td>
 
               <td className="modelPrinting" colspan="2">
-                
                 {model === "other" ? (
-                  <textarea name="model" value={modelInput} onChange={handleModelInputChange} />
-                ) :(
-                  <select name="model" value={model} onChange={handleModelChange}>
+                  <textarea
+                    name="model"
+                    value={modelInput}
+                    onChange={handleModelInputChange}
+                  />
+                ) : (
+                  <select
+                    name="model"
+                    value={model}
+                    onChange={handleModelChange}
+                  >
                     <option value="">Select</option>
-                    {bikeModel.map((bike)=>(
+                    {bikeModel.map((bike) => (
                       <option key={bike.model} value={bike.model}>
                         {bike.model}
                       </option>
@@ -896,21 +1044,9 @@ const Form = () => {
                     <option value="other">Other</option>
                   </select>
                 )}
-
-                {/* <select value={model} onChange={handleModelChange}>
-                  <option value="">Select</option>
-                  {bikeModel.map((bike) => (
-                    <option key={bike.model} value={bike.model}>
-                      {bike.model}
-                    </option>
-                  ))}
-                  <option value="other">Other</option>
-                </select>
-                */}
               </td>
 
               <td colspan="2">
-            
                 {model === "other" ? (
                   <textarea
                     value={descriptionInput}
@@ -918,9 +1054,7 @@ const Form = () => {
                   />
                 ) : (
                   <textarea type="text" value={description} readOnly />
-                  
-                 )}
-                
+                )}
               </td>
 
               <td colspan="2">
@@ -1150,12 +1284,9 @@ const Form = () => {
             overflow: "hidden",
             // position: "relative",
             // width: "100%",
-            maxWidth:"100%",
-            wordWrap:"break-word",
-            overflowWrap:"break-word",
-
-            
-
+            maxWidth: "100%",
+            wordWrap: "break-word",
+            overflowWrap: "break-word",
           }}
         >
           {footer && (
@@ -1200,15 +1331,17 @@ const Form = () => {
               </div>
 
               <div style={{ lineHeight: "normal" }}>
-                <p style={{fontWeight:"bold"}}>Terms & Conditions:</p>
-                <p style={{fontWeight:"bold",marginTop:"-12px"}}>Part A:</p>
-                <ul style={{marginTop:"-14px"}}>
+                <p style={{ fontWeight: "bold" }}>Terms & Conditions:</p>
+                <p style={{ fontWeight: "bold", marginTop: "-12px" }}>
+                  Part A:
+                </p>
+                <ul style={{ marginTop: "-14px" }}>
                   <li>
                     Warranty claims in respect of such items like shock
                     absorbers, speedometers etc. though claimed through us, are
-                    subject to acceptance of therespective manufacturers. In
-                    all such cases the decision of the respective manufacturer
-                    will be final and binding.
+                    subject to acceptance of therespective manufacturers. In all
+                    such cases the decision of the respective manufacturer will
+                    be final and binding.
                   </li>
                   <li>
                     Proprietary parts like tyres, tubes, battery and spark plugs
@@ -1239,14 +1372,14 @@ const Form = () => {
                     Pune jurisdiction only.
                   </li>
                 </ul>
-                <p style={{fontWeight:"bold",marginTop:"-9px"}}>Part B:</p>
-                <ul style={{marginTop:"-15px"}}>
+                <p style={{ fontWeight: "bold", marginTop: "-9px" }}>Part B:</p>
+                <ul style={{ marginTop: "-15px" }}>
                   <li>
                     No claim for exchange or repair can be considered unless the
                     customer :
                   </li>
                 </ul>
-                <ol style={{marginTop:"-15px"}} type="a">
+                <ol style={{ marginTop: "-15px" }} type="a">
                   <li>
                     Ensures that immediately upon detection of the defect, he
                     approaches any nearest Authorised Bajaj Vehicle Dealers &
@@ -1256,13 +1389,13 @@ const Form = () => {
                     Company.
                   </li>
                 </ol>
-                <ol style={{marginTop:"-15px"}} type="b">
+                <ol style={{ marginTop: "-15px" }} type="b">
                   <li>
                     Produces the Owner's Manual, in original, to enable that
                     dealer to verify the details.
                   </li>
                 </ol>
-                <ul style={{marginTop:"-15px"}}>
+                <ul style={{ marginTop: "-15px" }}>
                   <li>
                     It must be expressly understood that claims forwarded
                     directly to us by the owner / customer will not be
@@ -1275,7 +1408,7 @@ const Form = () => {
                   </li>
                 </ul>
 
-                <ol style={{marginTop:"-15px"}}>
+                <ol style={{ marginTop: "-15px" }}>
                   <li>Availing of Initial 3 Free Services without lapse.</li>
                   <li>
                     Availing paid schedule services at subsequent 5000 kms or
@@ -1296,9 +1429,13 @@ const Form = () => {
                     filter etc. as per periodic maintenance schedule.
                   </li>
                 </ol>
-               <p style={{fontWeight:"bold",marginTop:"-10px"}}>Part C:</p>
-                <p style={{marginTop:"-15px"}}>Further this warranty is NOT applicable to:</p>
-                <ul style={{marginTop:"-15px"}}>
+                <p style={{ fontWeight: "bold", marginTop: "-10px" }}>
+                  Part C:
+                </p>
+                <p style={{ marginTop: "-15px" }}>
+                  Further this warranty is NOT applicable to:
+                </p>
+                <ul style={{ marginTop: "-15px" }}>
                   <li>
                     Normal maintenance operations like brake & clutch
                     adjustments, cleaning of fuel system, engine tune-up or such
