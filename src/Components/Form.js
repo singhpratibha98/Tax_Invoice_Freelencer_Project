@@ -917,11 +917,12 @@ const Form = () => {
                     value={selectedOption}
                     onChange={handleChange}
                     style={{
-                      width: "57%",
+                      width: "64%",
                       whiteSpace: "normal",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       verticalAlign: "left",
+                      
                       borderColor:
                         selectedOption === "" && mandatoryFieldFilled
                           ? "red"
