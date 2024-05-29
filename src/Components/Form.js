@@ -1,10 +1,7 @@
 import React from "react";
 import App from "../App.css";
-import { useState, useEffect } from "react";
-// import pdfMake from "pdfmake/build/pdfmake";
-// import pdfFonts from "pdfmake/build/vfs_fonts";
-
-// pdfMake.vfs = pdfFonts.pdfMake.vfs;
+import { useState, useEffect, useRef } from "react";
+import { useReactToPrint } from "react-to-print";
 
 const Form = () => {
   const [showInvoice, setShowInvoice] = useState(false);
@@ -143,19 +140,46 @@ const Form = () => {
     setSelectedRow(serialNumber);
   };
 
-  const handleDownloadPDF = () => {
-    setFooter(!footer);
-    setHeader(!header);
+  // ------- - --React to print ---------//
 
-    setPrinting(true);
+  const ComponentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => ComponentRef.current,
+  });
+
+  const handlePrintAsync = () => {
+    return new Promise((resolve) => {
+      handlePrint();
+      resolve();
+    });
+  };
+
+  const handleDownloadPDF = () => {
+   
+    setFooter(true);
+    // setHeader(true);
+    
+
+    // setPrinting(true); //////////
     setDisabledButton(true);
+
     setTimeout(() => {
-      window.print();
-      setPrinting(false);
-      setDisabledButton(false);
-      setFooter(true);
-      setHeader(true);
-    }, 2000);
+      if (handlePrint) {
+        handlePrintAsync().then(() => {
+          setFooter(false);
+          setDisabledButton(false);
+          // setHeader(false);
+          //  setPrinting(false);
+        });
+      }
+
+      // window.print();
+      // setPrinting(false);
+      // setPrinting(true);
+      // setDisabledButton(false);
+      // setFooter(true);
+      // setHeader(true);
+    }, 1000);
   };
 
   const onhandleSubmit = (e) => {
@@ -459,6 +483,7 @@ const Form = () => {
       "EIGHT",
       "NINE",
     ];
+
     const teens = [
       "",
       "ELEVEN",
@@ -513,7 +538,7 @@ const Form = () => {
   };
 
   return (
-    <div style={{ paddingLeft: "5px", paddingRight: "5px" }}>
+    <div ref={ComponentRef} style={{ paddingLeft: "5px", paddingRight: "5px" }}>
       <div
         style={{
           maxWidth: "1000px",
@@ -522,7 +547,7 @@ const Form = () => {
           padding: "30px",
         }}
       >
-        {header && (
+        {/* {header && ( */}
           <div style={{ display: "flex", justifyContent: "center" }}>
             <div
               style={{
@@ -543,14 +568,14 @@ const Form = () => {
                   NEAR BANA MORE,BUS STOP,PS-KHIZERSARAI,
                   <br /> GAYA - 824233,
                   <br />
-                  PH. - 9113478767 Bihar [State Code : 10]
+                  PH - 9113478767 Bihar [State Code : 10]
                 </p>
               </div>
               <div style={{ textAlign: "left" }}>
                 <h3 style={{ marginBottom: "-15px" }}>MAA SERVICES (68530)</h3>
                 <p>
                   MAA SERVICES,NEAR BANA MORE,BUS
-                  <br /> STOP,PS-KHIZERSARAI GAYA-824233(BIHAR) Bihar <br />
+                  <br /> STOP,PS-KHIZERSARAI GAYA-824233 (BIHAR) Bihar <br />
                   [State Code : 10]
                 </p>
               </div>
@@ -563,7 +588,7 @@ const Form = () => {
               </div>
             </div>
           </div>
-        )}
+        {/* )} */}
 
         <div style={{ display: "flex", justifyContent: "center" }}>
           <div
@@ -578,9 +603,12 @@ const Form = () => {
               <p style={{ marginBottom: "-16px", fontWeight: "500" }}>GSTIN:</p>
               <h3>10CIVPK3547B3ZE</h3>
             </div>
-            <div style={{ textAlign: "center" }}>
+            <div
+              style={{ textAlign: "center", position: "absolute", left: "40%" }}
+            >
               <h2>TAX INVOICE (Vehicle)</h2>
             </div>
+
             <button
               className="Printbtn"
               onClick={handleDownloadPDF}
@@ -618,7 +646,7 @@ const Form = () => {
             }}
           >
             <div>
-              <div class="form-group">
+              <div className="form-group">
                 <span>
                   Customer Name
                   <span className="red-star" style={{ color: "red" }}>
@@ -638,13 +666,13 @@ const Form = () => {
                   }}
                 />
               </div>
-              <div class="form-group">
+              <div className="form-group">
                 <span>
                   Institution Type <span style={{ marginLeft: "25px" }}>:</span>
                 </span>
                 <input type="text" name="invoice_name" />
               </div>
-              <div class="form-group">
+              <div className="form-group">
                 <span>
                   Institution/Deptt{" "}
                   <span style={{ marginLeft: "16px" }}>:</span>
@@ -653,7 +681,7 @@ const Form = () => {
                 </span>
                 <input type="text" name="customer_gstin" />
               </div>
-              <div class="form-group">
+              <div className="form-group">
                 <span>
                   S/O | D/O | W/O{" "}
                   <span className="red-star" style={{ color: "red" }}>
@@ -674,13 +702,13 @@ const Form = () => {
                   }}
                 />
               </div>
-              <div class="form-group">
+              <div className="form-group">
                 <span>
                   Customer GSTIN <span style={{ marginLeft: "16px" }}>:</span>
                 </span>
                 <input type="tel" name="phone" />
               </div>
-              <div class="form-group">
+              <div className="form-group">
                 <span>
                   Phone{" "}
                   <span className="red-star" style={{ color: "red" }}>
@@ -700,7 +728,7 @@ const Form = () => {
                 />
               </div>
 
-              <div class="form-group">
+              <div className="form-group">
                 <span>
                   Aadhar Number{" "}
                   <span className="red-star" style={{ color: "red" }}>
@@ -720,7 +748,7 @@ const Form = () => {
                 />
               </div>
 
-              <div class="form-group">
+              <div className="form-group">
                 <span>
                   Bill To Address{" "}
                   <span className="red-star" style={{ color: "red" }}>
@@ -742,10 +770,10 @@ const Form = () => {
                         : "",
                     minHeight: "50px",
                   }}
-                ></textarea>
+                />
               </div>
 
-              <div class="form-group">
+              <div className="form-group">
                 <span>
                   Delivery Address <span style={{ marginLeft: "15px" }}>:</span>
                 </span>
@@ -754,13 +782,14 @@ const Form = () => {
                   name="delivery_address"
                   row="5"
                   cols="30"
-                  placeholder="MAA SERVICES,NEAR BANA MORE,BUS STOP,PS-KHIZERSARAI GAYA-82423 (BIHAR) Bihar [State Code : 10]"
+                  placeholder="MAA SERVICES,NEAR BANA MORE,BUS STOP,PS-KHIZERSARAI GAYA-824233 (BIHAR) Bihar [State Code : 10]"
+                  defaultValue="MAA SERVICES,NEAR BANA MORE,BUS STOP,PS-KHIZERSARAI GAYA-824233 (BIHAR) Bihar [State Code : 10]"
                   readOnly
-                ></textarea>
+                />
               </div>
             </div>
             <div>
-              <div class="form-group">
+              <div className="form-group">
                 <span>
                   Invoice No.{" "}
                   <span className="red-star" style={{ color: "red" }}>
@@ -781,7 +810,7 @@ const Form = () => {
                   }}
                 />
               </div>
-              <div class="form-group">
+              <div className="form-group">
                 <span>
                   Invoice Date{" "}
                   <span className="red-star" style={{ color: "red" }}>
@@ -801,7 +830,7 @@ const Form = () => {
                 />
               </div>
 
-              <div class="form-group">
+              <div className="form-group">
                 <span>
                   Wheather Tax <br />
                   Payable on <span style={{ marginLeft: "52px" }}>:</span>
@@ -811,17 +840,18 @@ const Form = () => {
                 <input
                   type="text"
                   placeholder="No"
+                  defaultValue="No"
                   readOnly
                   name="customer_gstin"
                 />
               </div>
-              <div class="form-group">
+              <div className="form-group">
                 <span>
                   Booking No. <span style={{ marginLeft: "42px" }}>:</span>
                 </span>
                 <input type="text" name="institutional_name" />
               </div>
-              <div class="form-group">
+              <div className="form-group">
                 <span>
                   Chassis No.{" "}
                   <span className="red-star" style={{ color: "red" }}>
@@ -842,7 +872,7 @@ const Form = () => {
                   }}
                 />
               </div>
-              <div class="form-group">
+              <div className="form-group">
                 <span>
                   Engine{" "}
                   <span className="red-star" style={{ color: "red" }}>
@@ -863,7 +893,7 @@ const Form = () => {
                   }}
                 />
               </div>
-              <div class="form-group">
+              <div className="form-group">
                 <span>
                   Color
                   <span className="red-star" style={{ color: "red" }}>
@@ -922,7 +952,7 @@ const Form = () => {
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       verticalAlign: "left",
-                      
+
                       borderColor:
                         selectedOption === "" && mandatoryFieldFilled
                           ? "red"
@@ -969,233 +999,286 @@ const Form = () => {
 
         <div className="centered-div">
           <table id="interactiveTable">
-            <tr onClick={() => handleRowClick(1)}>
-              <th colspan="2">S.NO.</th>
-              <th colspan="2">MODEL</th>
-              <th colspan="2">
-                DESCRIPTION
-                <br />
-                /HEN/SAC CODE
-              </th>
-              <th colspan="2">UNIT PRICE</th>
-              <th colspan="2">QTY</th>
-              <th colspan="2">DISCOUNT</th>
-              <th colspan="2">TAXABLE AMOUNT</th>
-              <th colspan="2">CESS</th>
-              <th colspan="2">
-                SGST/
-                <br />
-                UTGST(%)
-              </th>
-              <th colspan="2">
-                SGST/
-                <br />
-                UTGST
-              </th>
-              <th colspan="2">CGST(%)</th>
-              <th colspan="2">CGST</th>
-              <th colspan="2">
-                FAME <br />
-                SUBSIDY
-              </th>
-              <th colspan="2">
-                AMOUNT
-                <br />
-                (Rs)
-              </th>
-            </tr>
-            <tr>
-              <td colspan="2">
-                {" "}
-                {/* {selectedRow === 1 ? "1. " : "1."} */}
-                <textarea
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignContent: "center",
-                    padding: "10px",
-                    marginTop: "3px",
-                  }}
-                  type="text"
-                  id="r1c3"
-                >
-                  1.
-                </textarea>
-              </td>
-
-              <td className="modelPrinting" colspan="2">
-                {model === "other" ? (
+            <thead>
+              <tr onClick={() => handleRowClick(1)}>
+                <th colSpan="2">S.NO.</th>
+                <th colSpan="2">MODEL</th>
+                <th colSpan="2">
+                  DESCRIPTION
+                  <br />
+                  /HEN/SAC CODE
+                </th>
+                <th colSpan="2">UNIT PRICE</th>
+                <th colSpan="2">QTY</th>
+                <th colSpan="2">DISCOUNT</th>
+                <th colSpan="2">TAXABLE AMOUNT</th>
+                <th colSpan="2">CESS</th>
+                <th colSpan="2">
+                  SGST/
+                  <br />
+                  UTGST(%)
+                </th>
+                <th colSpan="2">
+                  SGST/
+                  <br />
+                  UTGST
+                </th>
+                <th colSpan="2">CGST(%)</th>
+                <th colSpan="2">CGST</th>
+                <th colSpan="2">
+                  FAME <br />
+                  SUBSIDY
+                </th>
+                <th colSpan="2">
+                  AMOUNT
+                  <br />
+                  (Rs)
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colSpan="2">
+                  {" "}
+                  {/* {selectedRow === 1 ? "1. " : "1."} */}
                   <textarea
-                    name="model"
-                    value={modelInput}
-                    onChange={handleModelInputChange}
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignContent: "center",
+                      padding: "10px",
+                      marginTop: "3px",
+                    }}
+                    type="text"
+                    id="r1c3"
+                    defaultValue="1."
+                    readOnly
                   />
-                ) : (
-                  <select
-                    name="model"
-                    value={model}
-                    onChange={handleModelChange}
-                  >
-                    <option value="">Select</option>
-                    {bikeModel.map((bike) => (
-                      <option key={bike.model} value={bike.model}>
-                        {bike.model}
-                      </option>
-                    ))}
-                    <option value="other">Other</option>
-                  </select>
-                )}
-              </td>
+                </td>
 
-              <td colspan="2">
-                {model === "other" ? (
+                <td className="modelPrinting" colSpan="2">
+                  {model === "other" ? (
+                    <textarea
+                      name="model"
+                      value={modelInput}
+                      onChange={handleModelInputChange}
+                    />
+                  ) : (
+                    <select
+                      name="model"
+                      value={model}
+                      onChange={handleModelChange}
+                    >
+                      <option value="">Select</option>
+                      {bikeModel.map((bike) => (
+                        <option key={bike.model} value={bike.model}>
+                          {bike.model}
+                        </option>
+                      ))}
+                      <option value="other">Other</option>
+                    </select>
+                  )}
+                </td>
+
+                <td colSpan="2">
+                  {model === "other" ? (
+                    <textarea
+                      value={descriptionInput}
+                      onChange={handleDesriptionChange}
+                    />
+                  ) : (
+                    <textarea type="text" value={description} readOnly />
+                  )}
+                </td>
+
+                <td colSpan="2">
                   <textarea
-                    value={descriptionInput}
-                    onChange={handleDesriptionChange}
+                    type="text"
+                    id="r1c6"
+                    value={unitPrice}
+                    onChange={(e) => setUnitPrice(e.target.value)}
                   />
-                ) : (
-                  <textarea type="text" value={description} readOnly />
-                )}
-              </td>
+                </td>
+                <td colSpan="2">
+                  <textarea type="text" id="r1c7" defaultValue="1.00" readOnly />
+                </td>
+                <td colSpan="2">
+                  <textarea
+                    type="text"
+                    id="r1c7"
+                    onChange={handleDiscountChange}
+                    value={discount}
+                    defaultValue="0.00"
+                    readOnly
+                  />
+                </td>
+                <td colSpan="2">
+                  <textarea
+                    type="text"
+                    id="r1c7"
+                    value={taxableAmount}
+                    onChange={(e) => setTaxableAmount(e.target.value)}
+                  />
+                </td>
+                <td colSpan="2">
+                  <textarea type="text" id="r1c7"></textarea>
+                </td>
+                <td colSpan="2">
+                  <textarea type="text" id="r1c7" defaultValue="14" readOnly />
+                </td>
+                <td colSpan="2">
+                  <textarea
+                    type="text"
+                    id="r1c7"
+                    value={sgstAmount}
+                    onChange={(e) => setSgstAmount(e.target.value)}
+                  />
+                </td>
+                <td colSpan="2">
+                  <textarea type="text" id="r1c7" defaultValue="14" readOnly />
+                </td>
+                <td colSpan="2">
+                  <textarea
+                    type="text"
+                    id="r1c7"
+                    value={cgstAmount}
+                    onChange={(e) => setcgstAmount(e.target.value)}
+                  />
+                </td>
+                <td colSpan="2">
+                  <textarea type="text" id="r1c7"></textarea>
+                </td>
+                <td colSpan="2">
+                  <textarea
+                    type="text"
+                    id="r1c7"
+                    onChange={onAmountChange}
+                    value={Amount}
+                  />
+                </td>
+              </tr>
+            </tbody>
 
-              <td colspan="2">
-                <textarea type="text" id="r1c6" value={unitPrice}></textarea>
-              </td>
-              <td colspan="2">
-                <textarea type="text" id="r1c7"></textarea>
-              </td>
-              <td colspan="2">
-                <textarea
-                  type="text"
-                  id="r1c7"
-                  onChange={handleDiscountChange}
-                  value={discount}
-                  readOnly
-                >
-                  0.00
-                </textarea>
-              </td>
-              <td colspan="2">
-                <textarea
-                  type="text"
-                  id="r1c7"
-                  value={taxableAmount}
-                ></textarea>
-              </td>
-              <td colspan="2">
-                <textarea type="text" id="r1c7"></textarea>
-              </td>
-              <td colspan="2">
-                <textarea type="text" id="r1c7" readOnly>
-                  14
-                </textarea>
-              </td>
-              <td colspan="2">
-                <textarea type="text" id="r1c7" value={sgstAmount}></textarea>
-              </td>
-              <td colspan="2">
-                <textarea type="text" id="r1c7" readOnly>
-                  14
-                </textarea>
-              </td>
-              <td colspan="2">
-                <textarea type="text" id="r1c7" value={cgstAmount}></textarea>
-              </td>
-              <td colspan="2">
-                <textarea type="text" id="r1c7"></textarea>
-              </td>
-              <td colspan="2">
-                <textarea
-                  type="text"
-                  id="r1c7"
-                  onChange={onAmountChange}
-                  value={Amount}
-                ></textarea>
-              </td>
-            </tr>
-            <tr>
-              <td style={{ fontWeight: "bold" }} colspan="12">
-                SUB TOTAL
-              </td>
-              <td colspan="2">
-                <textarea
-                  type="text"
-                  id="r1c4"
-                  value={taxableAmount}
-                ></textarea>
-              </td>
-              <td colspan="2">
-                <textarea type="text" id="r1c5" readOnly>
-                  0.00
-                </textarea>
-              </td>
-              <td colspan="2">
-                <textarea type="text" id="r1c6"></textarea>
-              </td>
-              <td colspan="2">
-                <textarea type="text" id="r2c7" value={sgstAmount}></textarea>
-              </td>
-              <td colspan="2">
-                <textarea type="text" id="r2c7"></textarea>
-              </td>
-              <td colspan="2">
-                <textarea type="text" id="r2c7" value={cgstAmount}></textarea>
-              </td>
-              <td colspan="2">
-                <textarea type="text" id="r2c7" readOnly>
-                  0.00
-                </textarea>
-              </td>
-              <td colspan="2">
-                <textarea type="text" id="r2c7" value={AmountOutput}></textarea>
-              </td>
-            </tr>
-            <tr>
-              <td style={{ fontWeight: "bold" }} colspan="26">
-                ROUND OFF
-              </td>
-              <td colspan="2">
-                <textarea type="text" id="r2c4" readOnly>
-                  -0.00
-                </textarea>
-              </td>
-            </tr>
-            <tr>
-              <td style={{ fontWeight: "bold" }} colspan="26">
-                TOTAL AMOUNT
-              </td>
-              <td colspan="2">
-                <textarea type="text" id="r2c4" value={AmountOutput}></textarea>
-              </td>
-            </tr>
+            <tfoot>
+              <tr>
+                <td style={{ fontWeight: "bold" }} colSpan="12">
+                  SUB TOTAL
+                </td>
+                <td colSpan="2">
+                  <textarea
+                    type="text"
+                    id="r1c4"
+                    value={taxableAmount}
+                    onChange={(e) => setTaxableAmount(e.target.value)}
+                  />
+                </td>
+                <td colSpan="2">
+                  <textarea
+                    type="text"
+                    id="r1c5"
+                    defaultValue="0.00"
+                    readOnly
+                  />
+                </td>
+                <td colSpan="2">
+                  <textarea type="text" id="r1c6"></textarea>
+                </td>
+                <td colSpan="2">
+                  <textarea
+                    type="text"
+                    id="r2c7"
+                    value={sgstAmount}
+                    onChange={(e) => setSgstAmount(e.target.value)}
+                  />
+                </td>
+                <td colSpan="2">
+                  <textarea type="text" id="r2c7"></textarea>
+                </td>
+                <td colSpan="2">
+                  <textarea
+                    type="text"
+                    id="r2c7"
+                    value={cgstAmount}
+                    onChange={(e) => setcgstAmount(e.target.value)}
+                  />
+                </td>
+                <td colSpan="2">
+                  <textarea
+                    type="text"
+                    id="r2c7"
+                    defaultValue="0.00"
+                    readOnly
+                  />
+                </td>
+                <td colSpan="2">
+                  <textarea
+                    type="text"
+                    id="r2c7"
+                    value={AmountOutput}
+                    onChange={(e) => setamountOutput(e.target.value)}
+                  />
+                </td>
+              </tr>
+
+              <tr>
+                <td style={{ fontWeight: "bold" }} colSpan="26">
+                  ROUND OFF
+                </td>
+                <td colSpan="2">
+                  <textarea
+                    type="text"
+                    id="r2c4"
+                    defaultValue="-0.00"
+                    readOnly
+                  />
+                </td>
+              </tr>
+
+              <tr>
+                <td style={{ fontWeight: "bold" }} colSpan="26">
+                  TOTAL AMOUNT
+                </td>
+                <td colSpan="2">
+                  <textarea
+                    type="text"
+                    id="r2c4"
+                    value={AmountOutput}
+                    onChange={(e) => setamountOutput(e.target.value)}
+                  />
+                </td>
+              </tr>
+            </tfoot>
           </table>
 
           <br />
           <br />
 
           <table>
-            <tr>
-              <td style={{ fontWeight: "bold" }} colspan="26">
-                AMOUNT IN WORDS
-              </td>
-              <td colspan="2">
-                <textarea
-                  style={{ width: "500px" }}
-                  type="text"
-                  id="r2c4"
-                  value={amountInWord}
-                ></textarea>
-              </td>
-
-              <button
-                style={{}}
-                className="CalculateBtn"
-                onClick={handleData}
-                disabled={!mandatoryFieldFilled || disabledButton}
-              >
-                {disabledButton ? "" : "Calculate"}
-              </button>
-            </tr>
+            <tbody>
+              <tr>
+                <td style={{ fontWeight: "bold" }} colSpan="26">
+                  AMOUNT IN WORDS
+                </td>
+                <td colSpan="2">
+                  <textarea
+                    style={{ width: "600px" }}
+                    type="text"
+                    id="r2c4"
+                    value={amountInWord}
+                    onChange={(e) => setAmountInWord(e.target.value)}
+                  />
+                </td>
+                <td style={{ border: "none" }}>
+                  <button
+                    className="CalculateBtn"
+                    onClick={handleData}
+                    disabled={!mandatoryFieldFilled || disabledButton}
+                  >
+                    {disabledButton ? "" : "Calculate"}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
           </table>
         </div>
 
@@ -1275,24 +1358,21 @@ const Form = () => {
 
         {/* ------------------- Footer content------------- */}
 
-        <div
-          style={{
-            // marginLeft: "auto",
-            // marginRight: "auto",
-            // maxWidth: "1020px",
-
-            marginTop: "-30px",
-            overflow: "hidden",
-            // position: "relative",
-            // width: "100%",
-            maxWidth: "100%",
-            wordWrap: "break-word",
-            overflowWrap: "break-word",
-          }}
-        >
-          {footer && (
-            <div style={{}}>
-              <div style={{}}>
+        {footer && (
+          <div
+            style={{
+              marginTop: "-30px",
+              overflow: "hidden",
+              // position: "relative",
+              // width: "100%",
+              maxWidth: "100%",
+              wordWrap: "break-word",
+              overflowWrap: "break-word",
+            }}
+          >
+            {/* {footer && ( */}
+            <div>
+              <div>
                 <div
                   style={{
                     display: "flex",
@@ -1466,7 +1546,7 @@ const Form = () => {
                         </span>
                       </p>
                       <p style={{}}>
-                        Chassis No : {" "}
+                        Chassis No :{" "}
                         <span style={{ marginLeft: "15px" }}>
                           {chassisOutput}
                         </span>
@@ -1544,8 +1624,9 @@ const Form = () => {
                 </div>
               </div>
             </div>
-          )}
-        </div>
+            {/* )} */}
+          </div>
+        )}
       </div>
     </div>
   );
