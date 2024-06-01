@@ -1547,7 +1547,7 @@ const Form = () => {
                       </p>
                       <p style={{}}>
                         Chassis No :{" "}
-                        <span style={{ marginLeft: "15px" }}>
+                        <span style={{ marginLeft: "5px" }}>
                           {chassisOutput}
                         </span>
                       </p>
