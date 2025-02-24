@@ -3,6 +3,8 @@ import App from "../App.css";
 import { useState, useEffect, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 
+
+
 const Form = () => {
   const [showInvoice, setShowInvoice] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -48,8 +50,9 @@ const Form = () => {
   const options = [
     "CASH",
     "INDUSIND BANK LTD.",
-    "BAJAJ AUTO FINANCE LTD.",
+    "BAJAJ AUTO CREDIT LTD.",
     "SHRIRAM FINANCE LTD.",
+    "HDB FINANCIAL SERVICES",
     "IDFC FIRST BANK LTD",
     "CHOLA MANDALAM INVESTMENT & FINANCE CO LTD.",
     "OTHER",
@@ -74,6 +77,7 @@ const Form = () => {
         engine?.trim() !== "" &&
         color?.trim() !== "" &&
         e.target.value?.trim() !== ""
+        
     );
   };
 
@@ -99,17 +103,19 @@ const Form = () => {
 
   const [bikeModel] = useState([
     { model: "00DH50", description: "PULSAR 125 NEON CBS" },
-    { model: "00DH41", description: "PULSAR 125 CAR SD" },
-    { model: "00DH43", description: "PULSAR 125 CAR SP" },
-    { model: "00DH42", description: "PULSAR 150 SD" },
-    { model: "00JR30", description: "PULSAR N 150 SD" },
+    { model: "00DH56", description: "PULSAR 125 SPLIT DI UG" },
+    { model: "00DH57", description: "PULSAR 125 PLAIN DI UG" },
+    { model: "00JF51", description: "PULSAR NS 125 DI UG" },
+    { model: "00DH60", description: "PULSAR 150 SD UG" },
+    { model: "00DH61", description: "PULSAR 150 TD UG" },
+    { model: "00JR38", description: "PULSAR N 150 SD" },
     { model: "00JR31", description: "PULSAR N 150 TD" },
-    { model: "00JR37", description: "PULSAR N 160 TWIN ABS" },
-    { model: "00DH44", description: "PULSAR 150 TD" },
-    { model: "00DY10", description: "CT 125 X" },
-    { model: "00JK36", description: "PLATINA 110 DABS" },
+    { model: "00JR37", description: "PULSAR N 160 UG" },
+    { model: "00JR21", description: "PULSAR N 160 UG" },
+    { model: "00JF43", description: "PULSAR NS 160 UG" },
+    { model: "00DK12", description: "PULSAR 22 F UG" },
     { model: "00JK35", description: "PLATINA 110 D" },
-    { model: "00PF35", description: "PLATINA 100 ES" },
+    { model: "00PF37", description: "PLATINA 100 ES D" },
     { model: "00DY08", description: "CT 110 X ES" },
   ]);
 
@@ -416,114 +422,173 @@ const Form = () => {
 
   //------------converting number to words-----------//
 
+  // const convertToWord = (num) => {
+  //   const ones = [
+  //     "",
+  //     "ONE",
+  //     "TWO",
+  //     "THREE",
+  //     "FOUR",
+  //     "FIVE",
+  //     "SIX",
+  //     "SEVEN",
+  //     "EIGHT",
+  //     "NINE",
+  //   ];
+  //   const teens = [
+  //     "",
+  //     "ELEVEN",
+  //     "TWELVE",
+  //     "THIRTEEN",
+  //     "FOURTEEN",
+  //     "FIFTEEN",
+  //     "SIXTEEN",
+  //     "SEVENTEEN",
+  //     "EIGHTEEN",
+  //     "NINETEEN",
+  //   ];
+  //   const tens = [
+  //     "",
+  //     "TEN",
+  //     "TWENTY",
+  //     "THIRTY",
+  //     "FORTY",
+  //     "FIFTY",
+  //     "SIXTY",
+  //     "SEVENTY",
+  //     "EIGHTY",
+  //     "NINETY",
+  //   ];
+
+  //   const thousands = ["", "THOUSAND","LAKH", "MILLION", "BILLION", "TRILLION"];
+
+  //   if (num === 0) return "zer0";
+  //   let parts = [];
+  //   let count = 0;
+  //   while (num > 0) {
+  //     if (num % 1000 !== 0) {
+  //       parts.unshift(thousands[count]);
+  //       parts.unshift(convertLessThanThousand(num % 1000));
+  //     }
+  //     num = Math.floor(num / 1000);
+  //     count++;
+  //   }
+  //   const words = parts.join(" ").trim();
+  //   return `Rs. ${words} ONLY.`;
+  // };
+
+  // const convertLessThanThousand = (num) => {
+  //   const ones = [
+  //     "",
+  //     "ONE",
+  //     "TWO",
+  //     "THREE",
+  //     "FOUR",
+  //     "FIVE",
+  //     "SIX",
+  //     "SEVEN",
+  //     "EIGHT",
+  //     "NINE",
+  //   ];
+
+  //   const teens = [
+  //     "",
+  //     "ELEVEN",
+  //     "TWELVE",
+  //     "THIRTEEN",
+  //     "FOURTEEN",
+  //     "FIFTEEN",
+  //     "SIXTEEN",
+  //     "SEVENTEEN",
+  //     "EIGHTEEN",
+  //     "NINETEEN",
+  //   ];
+  //   const tens = [
+  //     "",
+  //     "TEN",
+  //     "TWENTY",
+  //     "THIRTY",
+  //     "FORTY",
+  //     "FIFTY",
+  //     "SIXTY",
+  //     "SEVENTY",
+  //     "EIGHTY",
+  //     "NINETY",
+  //   ];
+  //   if (num === 0) {
+  //     return "";
+  //   } else if (num < 10) {
+  //     return ones[num];
+  //   } else if (num < 20) {
+  //     return teens[num - 10];
+  //   } else if (num < 100) {
+  //     return tens[Math.floor(num / 10)] + "  " + ones[num % 10];
+  //   } else {
+  //     return (
+  //       ones[Math.floor(num / 100)] +
+  //       " HUNDRED " +
+  //       convertLessThanThousand(num % 100)
+  //     );
+  //   }
+  // };
+
   const convertToWord = (num) => {
     const ones = [
-      "",
-      "ONE",
-      "TWO",
-      "THREE",
-      "FOUR",
-      "FIVE",
-      "SIX",
-      "SEVEN",
-      "EIGHT",
-      "NINE",
+        "", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"
     ];
     const teens = [
-      "",
-      "ELEVEN",
-      "TWELVE",
-      "THIRTEEN",
-      "FOURTEEN",
-      "FIFTEEN",
-      "SIXTEEN",
-      "SEVENTEEN",
-      "EIGHTEEN",
-      "NINETEEN",
+        "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN", "SIXTEEN",
+        "SEVENTEEN", "EIGHTEEN", "NINETEEN"
     ];
     const tens = [
-      "",
-      "TEN",
-      "TWENTY",
-      "THIRTY",
-      "FORTY",
-      "FIFTY",
-      "SIXTY",
-      "SEVENTY",
-      "EIGHTY",
-      "NINETY",
+        "", "", "TWENTY", "THIRTY", "FORTY", "FIFTY", "SIXTY", "SEVENTY", "EIGHTY", "NINETY"
     ];
-    const thousands = ["", "THOUSAND", "MILLION", "BILLION", "TRILLION"];
 
-    if (num === 0) return "zer0";
+    const placeValues = ["", "THOUSAND", "LAKH", "CRORE"];
+
+    if (num === 0) return "ZERO";
+
     let parts = [];
-    let count = 0;
-    while (num > 0) {
-      if (num % 1000 !== 0) {
-        parts.unshift(thousands[count]);
-        parts.unshift(convertLessThanThousand(num % 1000));
-      }
-      num = Math.floor(num / 1000);
-      count++;
-    }
-    const words = parts.join(" ").trim();
-    return `Rs. ${words} ONLY.`;
-  };
+    
+    // Convert number to Indian format (splitting into lakh, crore, etc.)
+    let crore = Math.floor(num / 10000000);
+    num %= 10000000;
+    let lakh = Math.floor(num / 100000);
+    num %= 100000;
+    let thousand = Math.floor(num / 1000);
+    num %= 1000;
+    let hundred = Math.floor(num / 100);
+    num %= 100;
 
-  const convertLessThanThousand = (num) => {
+    if (crore) parts.push(convertLessThanThousand(crore) + " CRORE");
+    if (lakh) parts.push(convertLessThanThousand(lakh) + " LAKH");
+    if (thousand) parts.push(convertLessThanThousand(thousand) + " THOUSAND");
+    if (hundred) parts.push(ones[hundred] + " HUNDRED");
+
+    if (num > 0) parts.push(convertLessThanThousand(num));
+
+    return `Rs. ${parts.join(" ")} ONLY.`;
+};
+
+// Function to convert numbers less than 1000
+const convertLessThanThousand = (num) => {
     const ones = [
-      "",
-      "ONE",
-      "TWO",
-      "THREE",
-      "FOUR",
-      "FIVE",
-      "SIX",
-      "SEVEN",
-      "EIGHT",
-      "NINE",
+        "", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"
     ];
-
     const teens = [
-      "",
-      "ELEVEN",
-      "TWELVE",
-      "THIRTEEN",
-      "FOURTEEN",
-      "FIFTEEN",
-      "SIXTEEN",
-      "SEVENTEEN",
-      "EIGHTEEN",
-      "NINETEEN",
+        "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN", "SIXTEEN",
+        "SEVENTEEN", "EIGHTEEN", "NINETEEN"
     ];
     const tens = [
-      "",
-      "TEN",
-      "TWENTY",
-      "THIRTY",
-      "FORTY",
-      "FIFTY",
-      "SIXTY",
-      "SEVENTY",
-      "EIGHTY",
-      "NINETY",
+        "", "", "TWENTY", "THIRTY", "FORTY", "FIFTY", "SIXTY", "SEVENTY", "EIGHTY", "NINETY"
     ];
-    if (num === 0) {
-      return "";
-    } else if (num < 10) {
-      return ones[num];
-    } else if (num < 20) {
-      return teens[num - 10];
-    } else if (num < 100) {
-      return tens[Math.floor(num / 10)] + "  " + ones[num % 10];
-    } else {
-      return (
-        ones[Math.floor(num / 100)] +
-        " HUNDRED " +
-        convertLessThanThousand(num % 100)
-      );
-    }
-  };
+
+    if (num === 0) return "";
+    if (num < 10) return ones[num];
+    if (num < 20) return teens[num - 10];
+
+    return tens[Math.floor(num / 10)] + " " + ones[num % 10];
+};
 
   const onModelChange = (e) => {
     setModel(e.target.value);
@@ -579,11 +644,13 @@ const Form = () => {
                   [State Code : 10]
                 </p>
               </div>
-              <div style={{ textAlign: "left" }}>
-                <h3 style={{ marginBottom: "-7px" }}>Original For Recipient</h3>
+              <div style={{ textAlign: "center"}}>
+                <h3 style={{ marginBottom: "10px"}}>Original For Recipient</h3>
                 <img
-                  style={{ height: "100px", width: "200px" }}
-                  src="https://zeevector.com/wp-content/uploads/2020/05/Bajaj-Bikes-Logo-PNG.png"
+                  style={{ height: "100px", width: "200px",display: "block", margin: "0 auto" }}
+                  src="/image/bajaj-logo.png"
+                  alt="Bajaj Logo"
+
                 />
               </div>
             </div>
